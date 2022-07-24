@@ -1,8 +1,27 @@
 {
   "compilerOptions": {
+    "types": ["node"],
+    "typeRoots": [ "../node_modules/@types"],
+    "module": "commonjs",
+    "target": "es2022",
     "strict": true,
-    "allowUnreachableCode": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
     "allowUnusedLabels": false,
-    "outDir": "dist",
-  },
+    "allowUnreachableCode": false,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "importsNotUsedAsValues": "error",
+    "checkJs": true,
+    "declaration": true,
+    "outDir": "./dist"
+  }
 }

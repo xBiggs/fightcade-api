@@ -2,9 +2,12 @@
   "name": "fightcade-api",
   "version": "1.0.0",
   "description": "An unofficial ts-node wrapper for the Fightcade API.",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["/dist"],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -19,8 +22,5 @@
   "devDependencies": {
     "@types/node": "^18.0.6",
     "typescript": "^4.7.4"
-  },
-  "files": [
-    "dist"
-  ]
+  }
 }

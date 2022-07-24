@@ -14,7 +14,6 @@ namespace Fightcade {
 
   export enum Res {
     OK = 'OK',
-    USER_NOT_FOUND = 'user not found',
   }
 
   export interface Request {
@@ -66,6 +65,23 @@ namespace Fightcade {
   }
 }
 
+/**
+ * Fightcade Rank Interface
+ *
+ * @example
+ * Here's a simple example:
+ * ```ts
+ * // Print the top 15 ranked UMK3 players and their ranks.
+ * const gameid = 'umk3';
+ * const rankings = await Fightcade.GetRankings(gameid);
+ * rankings.forEach(player => {
+ *  if (player.gameinfo && player.gameinfo[gameid].rank)
+ *    console.log(`${Fightcade.Rank[player.gameinfo[gameid].rank]}: ${player.name}`);
+ * });
+ * ```
+ *
+ * @public
+ */
 export enum Rank {
   E = 1,
   D,
@@ -75,6 +91,26 @@ export enum Rank {
   S,
 }
 
+/**
+ * GameInfo Interface
+ *
+ * @param rank - The Fightcade game {@link Rank}.
+ * @param num_matches - The number of ranked games played.
+ * @param last_match - Millisecond Epoch Date Timestamp of the last match played.
+ * @param time_played - Amount of time played in Milliseconds.
+ *
+ * @example
+ * Here's a simple example:
+ * ```ts
+ * // Print the user 'biggs' amount of ranked matches per game.
+ * const user = await Fightcade.GetUser('biggs');
+ * for (const gameid in user.gameinfo)
+ *   if (user.gameinfo[gameid].rank)
+ *    console.log(`${gameid}: ${user.gameinfo[gameid].num_matches}`);
+ * ```
+ *
+ * @public
+ */
 export interface GameInfo {
   [gameid: string]: {
     rank?: Rank,
@@ -84,6 +120,28 @@ export interface GameInfo {
   },
 }
 
+
+/**
+ * User Interface
+ *
+ * @param name - The Fightcade game username.
+ * @param gravatar - The Gravatar URL.
+ * @param ranked - Is the user a ranked player?
+ * @param last_online - The Millisecond Epoch Date Timestamp of last logout.
+ * @param date - The Millisecond Epoch Date Timestamp of account creation.
+ * @param gameinfo - The {@link GameInfo} object.
+ *
+ * @example
+ * Here's a simple example:
+ * ```ts
+ * // Print the user 'biggs' account creation date.
+ * const user = await Fightcade.GetUser('biggs');
+ * const date = new Date(user.date);
+ * console.log(date.toString());
+ * ```
+ *
+ * @public
+ */
 export interface User {
   name: string,
   gravatar?: string,
@@ -102,12 +160,11 @@ export interface User {
  * @example
  * Here's a simple example:
  * ```ts
- * // Print the user's amount of ranked matches per game.
- * const user = await FightcadePublicAPI.GetUser('biggs');
- * for (const gameid in user.gameinfo) {
+ * // Print the user 'biggs' amount of ranked matches per game.
+ * const user = await Fightcade.GetUser('biggs');
+ * for (const gameid in user.gameinfo)
  *   if (user.gameinfo[gameid].rank)
  *     console.log(`${gameid}: ${user.gameinfo[gameid].num_matches}`);
- * }
  * ```
  *
  * @throws {@link Fightcade.Res.USER_NOT_FOUND} This exception is thrown if the user is not found.
@@ -120,30 +177,61 @@ export async function GetUser(username: string): Promise<User> {
   const request: Fightcade.UserRequest = {
     req: Fightcade.Req.GET_USER,
     username: username,
-  }
-  try {
-    const response: Response = await fetch(Fightcade.URL.API, {
-      method: 'POST',
-      body: JSON.stringify(request),
-    });
-    const user_response: Fightcade.UserResponse = await response.json();
-    if (user_response.res === Fightcade.Res.OK) {
-      return user_response.user;
-    } else if (user_response.res === Fightcade.Res.USER_NOT_FOUND) {
-      throw Error(Fightcade.Res.USER_NOT_FOUND);
-    } else {
-      throw Error(user_response.res);
-    }
-  } catch (e) {
-    throw e;
-  }
+  };
+  const response: Response = await fetch(Fightcade.URL.API, {
+    method: 'POST',
+    body: JSON.stringify(request),
+  });
+  const user_response: Fightcade.UserResponse = await response.json();
+  if (user_response.res !== Fightcade.Res.OK) throw new Error(user_response.res);
+  else return user_response.user;
 }
 
+/**
+ * Country Interface.
+ *
+ * @param iso_code - ISO 3166-1 alpha2 country code.
+ * @param full_name - The country name.
+ *
+ * @example
+ * Here's a simple example:
+ * ```ts
+ * // Print the player names and countries from replay '1638725293444-1085'.
+ * const replay: Replay = await Fightcade.GetReplay('1638725293444-1085');
+ * replay.players.forEach(player => {
+ *  if (typeof player.country === 'string') console.log(`${player.name}: ${player.country}`);
+ *  else console.log(`${player.name}: ${player.country.full_name}`);
+ * });
+ * ```
+ *
+ * @public
+ */
 export interface Country {
   iso_code: string,
   full_name: string,
 }
 
+/**
+ * Player Interface.
+ *
+ * @param name - The Fightcade username.
+ * @param country - The country name or {@link Country} object.
+ * @param rank - The user game rank.
+ * @param score - The match score.
+ * @param gameinfo - The {@link GameInfo} object.
+ *
+ * @example
+ * Here's a simple example:
+ * ```ts
+ * // Print the player names from replay '1638725293444-1085'.
+ * const replay: Replay = await Fightcade.GetReplay('1638725293444-1085');
+ * replay.players.forEach(player => {
+ *  console.log(player.name);
+ * });
+ * ```
+ *
+ * @public
+ */
 export interface Player {
   name: string,
   country: string | Country,
@@ -152,6 +240,33 @@ export interface Player {
   gameinfo?: GameInfo
 }
 
+/**
+ * Replay Interface.
+ *
+ * @param quarkid - The Challenge ID.
+ * @param channelname - The Fightcade game channel name name.
+ * @param date - The Millisecond Epoch Date Timestamp of the replay.
+ * @param duration - The duration of the replay in Seconds.
+ * @param emulator - The emulator name.
+ * @param gameid - The Fightcade rom name.
+ * @param num_matches - The number of matches in the replay.
+ * @param players - The list of players in the replay.
+ * @param ranked - Was this replay a ranked match?
+ * @param replay_file - The replay file name.
+ * @param realtime_views - The total amount of live spectators.
+ * @param saved_views - The amount of replay views.
+ *
+ * @example
+ * Here's a simple example:
+ * ```ts
+ * // Print the date of replay '1638725293444-1085'.
+ * const replay = await Fightcade.GetReplay('1638725293444-1085');
+ * const date = new Date(replay.date);
+ * console.log(date.toString());
+ * ```
+ *
+ * @public
+ */
 export interface Replay {
   quarkid: string,
   channelname: string,
@@ -177,7 +292,7 @@ export interface Replay {
  * Here is a simple example
  * ```ts
  * // Print the date of the replay 1638725293444-1085
- * const replay = await FightcadePublicAPI.GetReplay('1638725293444-1085');
+ * const replay = await Fightcade.GetReplay('1638725293444-1085');
  * const date = new Date(replay.date);
  * console.log(date.toString());
  * ```
@@ -190,24 +305,29 @@ export async function GetReplay(quarkid: string): Promise<Replay> {
   const request: Fightcade.ReplayRequest = {
     req: Fightcade.Req.SEARCH_QUARKS,
     quarkid: quarkid,
-  }
-  try {
-    const response = await fetch(Fightcade.URL.API, {
-      method: 'POST',
-      body: JSON.stringify(request),
-    });
-    const replay: Fightcade.UserReplayResponse = await response.json();
-    if (replay.res !== Fightcade.Res.OK) throw Error(replay.res);
-    return replay.results.results[0];
-  } catch (e) {
-    throw e;
-  }
+  };
+  const response = await fetch(Fightcade.URL.API, {
+    method: 'POST',
+    body: JSON.stringify(request),
+  });
+  const replay: Fightcade.UserReplayResponse = await response.json();
+  if (replay.res !== Fightcade.Res.OK) throw new Error(replay.res);
+  else if (replay.results.results[0] === undefined) throw new RangeError();
+  else return replay.results.results[0];
 }
 
 /**
  * Retrieves the 15 most recent Fightcade replays.
  *
  * @returns The retrieved list of {@link Replay} objects.
+ *
+ * @example
+ * Here is a simple example
+ * ```ts
+ * // Print the game channel names of the 15 most recent replays.
+ * const replays = await Fightcade.GetReplays();
+ * replays.forEach(replay => console.log(replay.channelname));
+ * ```
  *
  * @throws {@link RangeError} This exception is thrown if the {@link Fightcade.UserReplayRequest} `results.count !== results.results.length`.
  *
@@ -216,12 +336,21 @@ export async function GetReplay(quarkid: string): Promise<Replay> {
  * @public
  */
 export async function GetReplays(): Promise<Replay[]>;
+
 /**
  * Retrieves a specified amount of the most recent Fightcade replays.
  *
  * @param limit - The amount of Fightcade replays to request beginning from the offset.
  * @param offest - The most recent replay number to request.
  * @returns The retrieved list of {@link Replay} objects.
+ *
+ * @example
+ * Here is a simple example
+ * ```ts
+ * // Print the game channel names of the 30 most recent replays.
+ * const replays = await Fightcade.GetReplays(30, 0);
+ * replays.forEach(replay => console.log(replay.channelname));
+ * ```
  *
  * @throws {@link RangeError} This exception is thrown if the {@link Fightcade.UserReplayRequest} `results.count !== results.results.length`.
  *
@@ -230,13 +359,22 @@ export async function GetReplays(): Promise<Replay[]>;
  * @public
  */
 export async function GetReplays(limit: number, offset: number): Promise<Replay[]>;
+
 /**
- * Retrieves a specified amount of the most recent Fightcade replays.
+ * Retrieves a specified amount of the most recent best Fightcade replays.
  *
  * @param limit - The amount of Fightcade replays to request beginning from the offset.
  * @param offest - The most recent replay number to request.
  * @param best - Requests to sort the recieved replays by views.
  * @returns The retrieved list of {@link Replay} objects.
+ *
+ *  @example
+ * Here is a simple example
+ * ```ts
+ * // Print the game channel names of the 5 most recent best replays.
+ * const replays = await Fightcade.GetReplays(5, 0, true);
+ * replays.forEach(replay => console.log(replay.channelname));
+ * ```
  *
  * @throws {@link RangeError} This exception is thrown if the {@link Fightcade.UserReplayRequest} `results.count !== results.results.length`.
  *
@@ -245,14 +383,23 @@ export async function GetReplays(limit: number, offset: number): Promise<Replay[
  * @public
  */
 export async function GetReplays(limit: number, offset: number, best: boolean): Promise<Replay[]>;
+
 /**
- * Retrieves a specified amount of the most recent Fightcade replays.
+ * Retrieves a specified amount of the most recent best Fightcade replays since a specified date.
  *
  * @param limit - The amount of Fightcade replays to request beginning from the offset.
  * @param offest - The most recent replay number to request.
  * @param best - Requests to sort the recieved replays by views.
  * @param since - Millisecond Epoch Timestamp Date.
  * @returns The retrieved list of {@link Replay} objects.
+ *
+ * @example
+ * Here is a simple example
+ * ```ts
+ * // Print the game channel names of the 5 most recent best replays since 1658032210798.
+ * const replays = await Fightcade.GetReplays(5, 0, true, 1658032210798);
+ * replays.forEach(replay => console.log(replay.channelname));
+ * ```
  *
  * @throws {@link RangeError} This exception is thrown if the {@link Fightcade.UserReplayRequest} `results.count !== results.results.length`.
  *
@@ -264,7 +411,7 @@ export async function GetReplays(limit: number, offset: number, best: boolean, s
 export async function GetReplays(limit?: number, offset?: number, best?: boolean, since?: number): Promise<Replay[]> {
   const request: Fightcade.ReplayRequest = {
     req: Fightcade.Req.SEARCH_QUARKS,
-  }
+  };
   if (limit !== undefined && offset !== undefined && best !== undefined && since !== undefined) {
     request.limit = limit;
     request.offset = offset;
@@ -278,32 +425,117 @@ export async function GetReplays(limit?: number, offset?: number, best?: boolean
     request.limit = limit;
     request.offset = offset;
   }
-  try {
-    const response: Response = await fetch(Fightcade.URL.API, {
-      method: 'POST',
-      body: JSON.stringify(request),
-    });
-    const replays_response: Fightcade.UserReplayResponse = await response.json();
-    if (replays_response.res === Fightcade.Res.OK) {
-      if (replays_response.results.count !== replays_response.results.results.length + 1) throw RangeError();
-      return replays_response.results.results;
-    } else {
-      throw Error(replays_response.res);
-    }
-  } catch (e) {
-    throw e;
-  }
+  const response: Response = await fetch(Fightcade.URL.API, {
+    method: 'POST',
+    body: JSON.stringify(request),
+  });
+  const replays_response: Fightcade.UserReplayResponse = await response.json();
+  if (replays_response.res !== Fightcade.Res.OK) throw new Error(replays_response.res);
+  else if (replays_response.results.count !== replays_response.results.results.length + 1) throw new RangeError();
+  else return replays_response.results.results;
 }
 
+/**
+ * Retrieves the Fightcade user's 15 most recent replays.
+ *
+ * @param username - The Fightcade username.
+ * @returns The retrieved list of {@link Replay} objects.
+ *
+ * @example
+ * Here is a simple example
+ * ```ts
+ * // Print the game channel names of the 15 most recent replays belonging to the user 'biggs'.
+ * const replays = await Fightcade.GetUserReplays('biggs');
+ * replays.forEach(replay => console.log(replay.channelname));
+ * ```
+ *
+ * @throws {@link RangeError} This exception is thrown if the {@link Fightcade.UserReplayRequest} `results.count !== results.results.length`.
+ *
+ * @throws {@link Error} This exception is thrown if {@link Fightcade.UserResponse} `res !==` {@link Fightcade.Res.OK}.
+ *
+ * @public
+ */
 export async function GetUserReplays(username: string): Promise<Replay[]>;
+
+/**
+ * Retrieves a specified amount of the Fightcade user's most recent replays.
+ *
+ * @param username - The Fightcade username.
+ * @param limit - The amount of Fightcade replays to request beginning from the offset.
+ * @param offest - The most recent replay number to request.
+ * @returns The retrieved list of {@link Replay} objects.
+ *
+ * @example
+ * Here is a simple example
+ * ```ts
+ * // Print the game channel names of the 30 most recent replays belonging to the user 'biggs'.
+ * const replays = await Fightcade.GetUserReplays('biggs', 30, 0);
+ * replays.forEach(replay => console.log(replay.channelname));
+ * ```
+ *
+ * @throws {@link RangeError} This exception is thrown if the {@link Fightcade.UserReplayRequest} `results.count !== results.results.length`.
+ *
+ * @throws {@link Error} This exception is thrown if {@link Fightcade.UserResponse} `res !==` {@link Fightcade.Res.OK}.
+ *
+ * @public
+ */
 export async function GetUserReplays(username: string, limit: number, offset: number): Promise<Replay[]>;
+
+/**
+ * Retrieves a specified amount of the Fightcade user's most recent replays.
+ *
+ * @param username - The Fightcade username.
+ * @param limit - The amount of Fightcade replays to request beginning from the offset.
+ * @param offest - The most recent replay number to request.
+ * @param best - Requests to sort the recieved replays by views.
+ * @returns The retrieved list of {@link Replay} objects.
+ *
+ * @example
+ * Here is a simple example
+ * ```ts
+ * // Print the game channel names of the 30 most recent best replays belonging to the user 'biggs'.
+ * const replays = await Fightcade.GetUserReplays('biggs', 30, 0, true);
+ * replays.forEach(replay => console.log(replay.channelname));
+ * ```
+ *
+ * @throws {@link RangeError} This exception is thrown if the {@link Fightcade.UserReplayRequest} `results.count !== results.results.length`.
+ *
+ * @throws {@link Error} This exception is thrown if {@link Fightcade.UserResponse} `res !==` {@link Fightcade.Res.OK}.
+ *
+ * @public
+ */
 export async function GetUserReplays(username: string, limit: number, offset: number, best: boolean): Promise<Replay[]>;
+
+/**
+ * Retrieves a specified amount of the Fightcade user's most recent replays.
+ *
+ * @param username - The Fightcade username.
+ * @param limit - The amount of Fightcade replays to request beginning from the offset.
+ * @param offest - The most recent replay number to request.
+ * @param best - Requests to sort the recieved replays by views.
+ * @param since - Millisecond Epoch Timestamp Date.
+ * @returns The retrieved list of {@link Replay} objects.
+ *
+ * @example
+ * Here is a simple example
+ * ```ts
+ * // Print the game channel names of the 30 most recent best replays belonging to the user 'biggs' since 1658032210798.
+ * const replays = await Fightcade.GetUserReplays('biggs', 30, 0, true, 1658032210798);
+ * replays.forEach(replay => console.log(replay.channelname));
+ * ```
+ *
+ * @throws {@link RangeError} This exception is thrown if the {@link Fightcade.UserReplayRequest} `results.count !== results.results.length`.
+ *
+ * @throws {@link Error} This exception is thrown if {@link Fightcade.UserResponse} `res !==` {@link Fightcade.Res.OK}.
+ *
+ * @public
+ */
 export async function GetUserReplays(username: string, limit: number, offset: number, best: boolean, since: number): Promise<Replay[]>;
 export async function GetUserReplays(username: string, limit?: number, offset?: number, best?: boolean, since?: number): Promise<Replay[]> {
   const request: Fightcade.UserReplayRequest = {
     req: Fightcade.Req.SEARCH_QUARKS,
     username: username,
-  }
+  };
   if (limit !== undefined && offset !== undefined && best !== undefined && since !== undefined) {
     request.limit = limit;
     request.offset = offset;
@@ -317,21 +549,14 @@ export async function GetUserReplays(username: string, limit?: number, offset?: 
     request.limit = limit;
     request.offset = offset;
   }
-  try {
-    const response: Response = await fetch(Fightcade.URL.API, {
-      method: 'POST',
-      body: JSON.stringify(request),
-    });
-    const user_replays_response: Fightcade.UserReplayResponse = await response.json();
-    if (user_replays_response.res === Fightcade.Res.OK) {
-      if (user_replays_response.results.count !== user_replays_response.results.results.length + 1) throw RangeError();
-      return user_replays_response.results.results;
-    } else {
-      throw Error(user_replays_response.res);
-    }
-  } catch (e) {
-    throw e;
-  }
+  const response: Response = await fetch(Fightcade.URL.API, {
+    method: 'POST',
+    body: JSON.stringify(request),
+  });
+  const user_replays_response: Fightcade.UserReplayResponse = await response.json();
+  if (user_replays_response.res !== Fightcade.Res.OK) throw new Error(user_replays_response.res);
+  else if (user_replays_response.results.count !== user_replays_response.results.results.length + 1) throw new RangeError();
+  else return user_replays_response.results.results;
 }
 
 /**
@@ -344,8 +569,8 @@ export async function GetUserReplays(username: string, limit?: number, offset?: 
  * Here's a simple example:
  * ```ts
  * // Print the replay URLs of a user's 15 most recent replays.
- * const user_replays = await FightcadePublicAPI.GetUserReplays('biggs');
- * user_replays.forEach(replay => console.log(FightcadePublicAPI.GetReplayURL(replay)));
+ * const user_replays = await Fightcade.GetUserReplays('biggs');
+ * user_replays.forEach(replay => console.log(Fightcade.GetReplayURL(replay)));
  * ```
  *
  * @public
@@ -366,8 +591,8 @@ export function GetReplayURL(replay: Replay): string {
  * Here's a simple example:
  * ```ts
  * // Print what the video URLs would be for a user's 15 most recent replays.
- * const user_replays = await FightcadePublicAPI.GetUserReplays('biggs');
- * user_replays.forEach(replay => console.log(FightcadePublicAPI.GetVideoURL(replay)));
+ * const user_replays = await Fightcade.GetUserReplays('biggs');
+ * user_replays.forEach(replay => console.log(Fightcade.GetVideoURL(replay)));
  * ```
  *
  * @public
@@ -386,25 +611,22 @@ export function GetVideoURL(replay: Replay): string;
  * ```ts
  * // Print the video URL of the replay 1638725293444-1085.
  * const quarkid = '1638725293444-1085';
- * console.log(FightcadePublicAPI.GetVideoURL(quarkid));
+ * console.log(Fightcade.GetVideoURL(quarkid));
  * ```
  *
  * @public
  */
 export function GetVideoURL(replay: string): string;
 export function GetVideoURL(replay: Replay | string): string {
-  if (typeof replay === 'string') {
-    return `${Fightcade.URL.VIDEO}${replay}`;
-  } else {
-    return `${Fightcade.URL.VIDEO}${replay.quarkid}`;
-  }
+  if (typeof replay === 'string') return `${Fightcade.URL.VIDEO}${replay}`;
+  else return `${Fightcade.URL.VIDEO}${replay.quarkid}`;
 }
 
 /**
  * Gets the top 15 ranked players for a game.
  *
  * @param gameid - The ranked game rom name.
- * @param beElo - Request that the players be sorted by ELO.
+ * @param byElo - Request that the players be sorted by ELO.
  * @param recent - Request that the rankings include only recent players.
  * @returns A ranked list of {@link Player} objects.
  *
@@ -413,10 +635,10 @@ export function GetVideoURL(replay: Replay | string): string {
  * ```ts
  * // Print the top 15 ranked UMK3 players and their ranks.
  * const gameid = 'umk3';
- * const rankings = await FightcadePublicAPI.GetRankings(gameid);
+ * const rankings = await Fightcade.GetRankings(gameid);
  * rankings.forEach(player => {
  *  if (player.gameinfo && player.gameinfo[gameid].rank)
- *    console.log(`${FightcadePublicAPI.Rank[player.gameinfo[gameid].rank]}: ${player.name}`);
+ *    console.log(`${Fightcade.Rank[player.gameinfo[gameid].rank]}: ${player.name}`);
  * });
  * ```
  *
@@ -428,20 +650,13 @@ export async function GetRankings(gameid: string, byElo: boolean = true, recent:
     gameid: gameid,
     byElo: byElo,
     recent: recent,
-  }
-  try {
-    const response: Response = await fetch(Fightcade.URL.API, {
-      method: 'POST',
-      body: JSON.stringify(request),
-    });
-    const ranking_response: Fightcade.RankingResponse = await response.json();
-    if (ranking_response.res === Fightcade.Res.OK) {
-      if (ranking_response.results.count !== ranking_response.results.results.length + 1) throw RangeError();
-      return ranking_response.results.results;
-    } else {
-      throw Error(ranking_response.res);
-    }
-  } catch (e) {
-    throw e;
-  }
+  };
+  const response: Response = await fetch(Fightcade.URL.API, {
+    method: 'POST',
+    body: JSON.stringify(request),
+  });
+  const ranking_response: Fightcade.RankingResponse = await response.json();
+  if (ranking_response.res !== Fightcade.Res.OK) throw new Error(ranking_response.res);
+  else if (ranking_response.results.count !== ranking_response.results.results.length + 1) throw new RangeError();
+  else return ranking_response.results.results;
 }
