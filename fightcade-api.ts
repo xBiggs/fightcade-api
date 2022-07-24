@@ -197,7 +197,7 @@ export async function GetUser(username: string): Promise<User> {
  * Here's a simple example:
  * ```ts
  * // Print the player names and countries from replay '1638725293444-1085'.
- * const replay: Replay = await Fightcade.GetReplay('1638725293444-1085');
+ * const replay = await Fightcade.GetReplay('1638725293444-1085');
  * replay.players.forEach(player => {
  *  if (typeof player.country === 'string') console.log(`${player.name}: ${player.country}`);
  *  else console.log(`${player.name}: ${player.country.full_name}`);
@@ -224,7 +224,7 @@ export interface Country {
  * Here's a simple example:
  * ```ts
  * // Print the player names from replay '1638725293444-1085'.
- * const replay: Replay = await Fightcade.GetReplay('1638725293444-1085');
+ * const replay = await Fightcade.GetReplay('1638725293444-1085');
  * replay.players.forEach(player => {
  *  console.log(player.name);
  * });
