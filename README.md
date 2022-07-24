@@ -11,7 +11,7 @@ npm install fightcade-api
 
 ## Example usage
 
-There a several examples provided in the source's TSDoc.
+There are several examples provided in the source's TSDoc.
 
 
 ```ts
