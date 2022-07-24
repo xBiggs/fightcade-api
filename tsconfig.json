@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "outDir": "dist",
+  },
+}
