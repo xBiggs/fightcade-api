@@ -75,8 +75,8 @@ namespace Fightcade {
 
   export interface EventRequest extends Fightcade.Request {
     gameid: string,
-    limit: number,
-    offset: number,
+    limit?: number,
+    offset?: number,
   }
 
   export interface EventResponse extends Fightcade.Response {
@@ -858,36 +858,83 @@ export async function GetGame(gameid: string): Promise<Game> {
 
 /**
  * Interface Event.
- * Not implemented yet.
  *
- * @private
+ * @param name - The event name.
+ * @param author - The event author's Fightcade username.
+ * @param date - The Millisecond Epoch Date Timestamp of the event.
+ * @param gameid - The Fightcade game rom name.
+ * @param link - The link to the event.
+ * @param region - The event region.
+ * @param stream - The event livestream link.
+ *
+ * @public
  */
 export interface Event {
-
+  name: string,
+  author: string,
+  date: number,
+  gameid: string,
+  link: string,
+  region: string,
+  stream?: string,
 }
 
 /**
- * Gets the {@link Event} objects for a specified game.
- * Not implemented yet.
+ * Retrieves the 15 most recent active {@link Event} objects for a game.
+ * This function can return an empty list if there are active events.
  *
- * @param gameid - The Fightcade username.
- * @param limit - The amount of Fightcade events to request beginning from the offset.
- * @param offset - The most recent event number to request.
- * @returns The retrieved list of {@link Replay} objects.
+ * @param gameid - The Fightcade game rom name.
+ * @returns The retrieved list of the 15 most recent active {@link Event} objects for a specified game.
+ *
+ * ```ts
+ * // Print the 15 most recent active events for a game.
+ * const gameid = 'garou';
+ * const events = await Fightcade.GetEvents(gameid);
+ * events.forEach(event => console.log(event));
+ * ```
  *
  * @throws {@link RangeError} This exception is thrown if the {@link Fightcade.EventResponse} `results.count !== results.results.length`.
  *
  * @throws {@link Error} This exception is thrown if {@link Fightcade.EventResponse} `res !==` {@link Fightcade.Res.OK}.
  *
- * @private
+ * @public
  */
-export async function GetEvents(gameid: string, limit: number, offset: number): Promise<Event[]> {
+export async function GetEvents(gameid: string): Promise<Event[]>;
+
+/**
+ * Retrieves a specified amount of the active {@link Event} objects for a game.
+ * This function can return an empty list if there are active events.
+ *
+ * @param gameid - The Fightcade game rom name.
+ * @param limit - The amount of Fightcade events to request beginning from the offset.
+ * @param offset - The most recent event number to request.
+ * @returns The retrieved list of {@link Replay} objects.
+ *
+ * @example
+ * Here is a simple example.
+ * ```ts
+ * // Print the 30 most recent active events for a game.
+ * const gameid = 'garou';
+ * const events = await Fightcade.GetEvents(gameid, 30, 0);
+ * events.forEach(event => console.log(event));
+ * ```
+ *
+ * @throws {@link RangeError} This exception is thrown if the {@link Fightcade.EventResponse} `results.count !== results.results.length`.
+ *
+ * @throws {@link Error} This exception is thrown if {@link Fightcade.EventResponse} `res !==` {@link Fightcade.Res.OK}.
+ *
+ * @public
+ */
+export async function GetEvents(gameid: string, limit: number, offset: number): Promise<Event[]>;
+export async function GetEvents(gameid: string, limit?: number, offset?: number): Promise<Event[]> {
   const request: Fightcade.EventRequest = {
     req: Fightcade.Req.SEARCH_EVENTS,
     gameid: gameid,
-    limit: limit,
-    offset: offset,
   };
+  if (limit !== undefined && offset !== undefined) {
+    request.limit = limit;
+    request.offset = offset;
+  }
   const response: Response = await fetch(Fightcade.URL.API, {
     method: 'POST',
     body: JSON.stringify(request),

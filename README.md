@@ -5,6 +5,8 @@ An unofficial ts-node wrapper for the Fightcade API.
 
 **Node.js 18.6.0 or newer is required.**
 
+**This package leverages the experimental NodeJS Fetch API**
+
 ```sh-session
 npm install fightcade-api
 ```
@@ -219,10 +221,24 @@ const main = (async () => {
 
 ### GetEvents
 
-**This method has not been implemented yet.**
+```ts
+async function GetEvents(gameid: string): Promise<Event[]>;
+async function GetEvents(gameid: string, limit: number, offset: number): Promise<Event[]>
+```
 
 ```ts
-async function GetEvents(gameid: string, limit: number, offset: number): Promise<Event[]>
+import * as Fightcade from 'fightcade-api';
+
+const main = (async () => {
+  try {
+    // Print the 15 most recent active events for a game.
+    const gameid = 'garou';
+    const events = await Fightcade.GetEvents(gameid);
+    events.forEach(event => console.log(event));
+  } catch(e) {
+    console.log(e);
+  }
+})();
 ```
 
 ## Links
