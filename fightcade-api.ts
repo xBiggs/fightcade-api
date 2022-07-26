@@ -17,74 +17,88 @@ namespace Fightcade {
     OK = 'OK',
   }
 
-  export interface Request {
-    req: Req,
+  interface Request<T> {
+    req: T,
   }
 
-  export interface Response {
+  interface Response {
     res: Res,
   }
 
-  export interface UserRequest extends Fightcade.Request {
+  interface UsernameRequest<T> extends Request<T> {
     username: string,
   }
 
-  export interface UserResponse extends Fightcade.Response {
+  interface GameIDRequest<T> extends Request<T> {
+    gameid: string,
+  }
+
+  interface QuarkIDRequest<T> extends Request<T> {
+    quarkid: string,
+  }
+
+  interface LimitOffestRequest<T> extends Request<T> {
+    limit: number,
+    offset: number,
+  }
+
+  interface BestRequest<T> extends Request<T> {
+    best: boolean
+  }
+
+  interface SinceRequest<T> extends Request<T> {
+    since: number,
+  }
+
+  interface ByEloRecentRequest<T> extends Request<T> {
+    // offset?: number,
+    // limit?: number,
+    byElo: boolean,
+    recent: boolean,
+  }
+
+  interface BestLimitOffsetRequest<T> extends BestRequest<T>, LimitOffestRequest<T> {}
+
+  interface SinceBestLimitOffsetRequest<T> extends SinceRequest<T>, BestLimitOffsetRequest<T> {}
+
+  interface GameIDLimitOffsetRequest<T> extends GameIDRequest<T>, LimitOffestRequest<T> {}
+
+  interface ByEloRecentGameIDRequest<T> extends ByEloRecentRequest<T>, GameIDRequest<T> {}
+
+  interface ResultsResponse<T> extends Response {
+    results: {
+      results: T[],
+      count: number,
+    },
+  }
+
+  export type UserRequest = UsernameRequest<Req.GET_USER>;
+
+  export interface UserResponse extends Response {
     user: User,
   }
 
-  export interface ReplayRequest extends Fightcade.Request {
-    limit?: number,
-    offset?: number,
-    best?: boolean,
-    since?: number,
-    quarkid?: string,
-  }
+  export type ReplayRequest = QuarkIDRequest<Req.SEARCH_QUARKS>;
 
-  export interface UserReplayRequest extends Fightcade.UserRequest, Fightcade.ReplayRequest {}
+  export type ReplaysRequest = Request<Req.SEARCH_QUARKS> | LimitOffestRequest<Req.SEARCH_QUARKS> | BestLimitOffsetRequest<Req.SEARCH_QUARKS> | SinceBestLimitOffsetRequest<Req.SEARCH_QUARKS>;
 
-  export interface UserReplayResponse extends Fightcade.Response {
-    results: {
-      results: Replay[],
-      count: number,
-    },
-  }
+  export type ReplayResponse = ResultsResponse<Replay>;
 
-  export interface RankingRequest extends Fightcade.Request {
-    offset?: number,
-    limit?: number,
-    gameid: string,
-    byElo?: boolean,
-    recent?: boolean,
-  }
+  export type UserReplayRequest = UsernameRequest<Req.SEARCH_QUARKS> & ReplaysRequest;
 
-  export interface RankingResponse extends Fightcade.Response {
-    results: {
-      results: Player[],
-      count: number,
-    },
-  }
+  export type RankingRequest = ByEloRecentGameIDRequest<Req.SEARCH_RANKINGS>;
 
-  export interface GameRequest extends Fightcade.Request {
-    gameid: string,
-  }
+  export type RankingResponse = ResultsResponse<Player>;
 
-  export interface GameResponse extends Fightcade.Response {
+  export type GameRequest = GameIDRequest<Req.GAME_INFO>;
+
+  export interface GameResponse extends Response {
     game: Game,
   }
 
-  export interface EventRequest extends Fightcade.Request {
-    gameid: string,
-    limit?: number,
-    offset?: number,
-  }
+  export type EventRequest = GameIDRequest<Req.SEARCH_EVENTS> | GameIDLimitOffsetRequest<Req.SEARCH_EVENTS>;
 
-  export interface EventResponse extends Fightcade.Response {
-    results: {
-      results: Event[],
-      count: number,
-    },
-  }
+  export type EventResponse = ResultsResponse<Event>;
 }
 
 namespace FightcadeVids {
@@ -352,7 +366,7 @@ export async function GetReplay(quarkid: string): Promise<Replay> {
     method: 'POST',
     body: JSON.stringify(request),
   });
-  const replay: Fightcade.UserReplayResponse = await response.json();
+  const replay: Fightcade.ReplayResponse = await response.json();
   if (replay.res !== Fightcade.Res.OK) throw new Error(replay.res);
   else if (replay.results.results[0] === undefined) throw new RangeError();
   else return replay.results.results[0];
@@ -451,27 +465,29 @@ export async function GetReplays(limit: number, offset: number, best: boolean): 
  */
 export async function GetReplays(limit: number, offset: number, best: boolean, since: number): Promise<Replay[]>;
 export async function GetReplays(limit?: number, offset?: number, best?: boolean, since?: number): Promise<Replay[]> {
-  const request: Fightcade.ReplayRequest = {
+  const request: Fightcade.ReplaysRequest = (limit !== undefined && offset !== undefined && best !== undefined && since !== undefined) ? {
+    req: Fightcade.Req.SEARCH_QUARKS,
+    limit: limit,
+    offset: offset,
+    best: best,
+    since: since,
+  } : (limit !== undefined && offset !== undefined && best !== undefined) ? {
+    req: Fightcade.Req.SEARCH_QUARKS,
+    limit: limit,
+    offset: offset,
+    best: best,
+  } : (limit !== undefined && offset !== undefined) ? {
+    req: Fightcade.Req.SEARCH_QUARKS,
+    limit: limit,
+    offset: offset,
+  } : {
     req: Fightcade.Req.SEARCH_QUARKS,
   };
-  if (limit !== undefined && offset !== undefined && best !== undefined && since !== undefined) {
-    request.limit = limit;
-    request.offset = offset;
-    request.best = best;
-    request.since = since;
-  } else if (limit !== undefined && offset !== undefined && best !== undefined) {
-    request.limit = limit;
-    request.offset = offset;
-    request.best = best;
-  } else if (limit !== undefined && offset !== undefined) {
-    request.limit = limit;
-    request.offset = offset;
-  }
   const response: Response = await fetch(Fightcade.URL.API, {
     method: 'POST',
     body: JSON.stringify(request),
   });
-  const replays_response: Fightcade.UserReplayResponse = await response.json();
+  const replays_response: Fightcade.ReplayResponse = await response.json();
   if (replays_response.res !== Fightcade.Res.OK) throw new Error(replays_response.res);
   else if (replays_response.results.count !== replays_response.results.results.length + 1) throw new RangeError();
   else return replays_response.results.results;
@@ -574,28 +590,33 @@ export async function GetUserReplays(username: string, limit: number, offset: nu
  */
 export async function GetUserReplays(username: string, limit: number, offset: number, best: boolean, since: number): Promise<Replay[]>;
 export async function GetUserReplays(username: string, limit?: number, offset?: number, best?: boolean, since?: number): Promise<Replay[]> {
-  const request: Fightcade.UserReplayRequest = {
+  const request: Fightcade.UserReplayRequest = (limit !== undefined && offset !== undefined && best !== undefined && since !== undefined) ? {
+    req: Fightcade.Req.SEARCH_QUARKS,
+    username: username,
+    limit: limit,
+    offset: offset,
+    best: best,
+    since: since,
+  } : (limit !== undefined && offset !== undefined && best !== undefined) ? {
+    req: Fightcade.Req.SEARCH_QUARKS,
+    username: username,
+    limit: limit,
+    offset: offset,
+    best: best,
+  } : (limit !== undefined && offset !== undefined) ? {
+    req: Fightcade.Req.SEARCH_QUARKS,
+    username: username,
+    limit: limit,
+    offset: offset,
+  } : {
     req: Fightcade.Req.SEARCH_QUARKS,
     username: username,
   };
-  if (limit !== undefined && offset !== undefined && best !== undefined && since !== undefined) {
-    request.limit = limit;
-    request.offset = offset;
-    request.best = best;
-    request.since = since;
-  } else if (limit !== undefined && offset !== undefined && best !== undefined) {
-    request.limit = limit;
-    request.offset = offset;
-    request.best = best;
-  } else if (limit !== undefined && offset !== undefined) {
-    request.limit = limit;
-    request.offset = offset;
-  }
   const response: Response = await fetch(Fightcade.URL.API, {
     method: 'POST',
     body: JSON.stringify(request),
   });
-  const user_replays_response: Fightcade.UserReplayResponse = await response.json();
+  const user_replays_response: Fightcade.ReplayResponse = await response.json();
   if (user_replays_response.res !== Fightcade.Res.OK) throw new Error(user_replays_response.res);
   else if (user_replays_response.results.count !== user_replays_response.results.results.length + 1) throw new RangeError();
   else return user_replays_response.results.results;
@@ -927,14 +948,15 @@ export async function GetEvents(gameid: string): Promise<Event[]>;
  */
 export async function GetEvents(gameid: string, limit: number, offset: number): Promise<Event[]>;
 export async function GetEvents(gameid: string, limit?: number, offset?: number): Promise<Event[]> {
-  const request: Fightcade.EventRequest = {
+  const request: Fightcade.EventRequest = (limit !== undefined && offset !== undefined) ? {
+    req: Fightcade.Req.SEARCH_EVENTS,
+    gameid: gameid,
+    limit: limit,
+    offset: offset,
+  } : {
     req: Fightcade.Req.SEARCH_EVENTS,
     gameid: gameid,
   };
-  if (limit !== undefined && offset !== undefined) {
-    request.limit = limit;
-    request.offset = offset;
-  }
   const response: Response = await fetch(Fightcade.URL.API, {
     method: 'POST',
     body: JSON.stringify(request),

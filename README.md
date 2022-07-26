@@ -1,5 +1,5 @@
 # fightcade-api
-An unofficial ts-node wrapper for the Fightcade API.
+An unofficial ts-node wrapper for the [Fightcade](https://www.fightcade.com/) Public API.
 
 ## Installation
 
@@ -244,8 +244,8 @@ const main = (async () => {
 ## Links
 
 - [npm](https://www.npmjs.com/package/fightcade-api)
-- [nodejs](https://nodejs.org/en/)
-- [typescript](https://www.typescriptlang.org/)
-- [tsdoc](https://tsdoc.org/)
-- [fightcade](https://www.fightcade.com/)
+- [NodeJS](https://nodejs.org/en/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [TSDoc](https://tsdoc.org/)
+- [Fightcade](https://www.fightcade.com/)
 

@@ -1,6 +1,6 @@
 {
   "name": "fightcade-api",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "An unofficial ts-node wrapper for the Fightcade API.",
   "main": "dist/fightcade-api.js",
   "types": "dist/fightcade-api.d.ts",
