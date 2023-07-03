@@ -1,9 +1,9 @@
 # fightcade-api
-An unofficial ts-node wrapper for the [Fightcade](https://www.fightcade.com/) Public API.
+An unofficial TypeScript wrapper for the [Fightcade](https://www.fightcade.com/) Public API.
 
 ## Installation
 
-**Node.js 18.6.0 or newer is required.**
+**Node.js 18.6.1 or newer is required.**
 
 **This package leverages the experimental NodeJS Fetch API**
 
