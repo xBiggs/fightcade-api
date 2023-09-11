@@ -23,6 +23,25 @@ yarn add fightcade-api
 
 This library supports TS, ESM, and CommonJS.
 
+#### ECMAScript Modules
+
+```ts
+import { Fightcade } from 'fightcade-api';
+```
+
+You can also import library functions individually:
+
+```ts
+import { GetUser } from 'fightcade-api';
+```
+
+#### CommonJS
+
+```ts
+const Fightcade = require('fightcade-api').default;
+```
+
+
 There are several examples provided in the source's TSDoc.
 
 ### GetUser
