@@ -767,4 +767,16 @@ export namespace Fightcade {
   }
 };
 
-export default Fightcade;
+export default {
+  Rank: Fightcade.Rank,
+  GetUser: Fightcade.GetUser,
+  GetReplay: Fightcade.GetReplay,
+  GetReplays: Fightcade.GetReplays,
+  GetUserReplays: Fightcade.GetUserReplays,
+  GetReplayURL: Fightcade.GetReplayURL,
+  GetVideoURL: Fightcade.GetVideoURL,
+  GetVideoURLs: Fightcade.GetVideoURLs,
+  GetRankings: Fightcade.GetRankings,
+  GetGame: Fightcade.GetGame,
+  GetEvents: Fightcade.GetEvents,
+} as const;
