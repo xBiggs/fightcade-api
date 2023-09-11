@@ -1,14 +1,11 @@
 {
   "name": "fightcade-api",
-  "version": "1.0.5",
-  "description": "An unofficial ts-node wrapper for the Fightcade API.",
+  "version": "2.0.0",
+  "description": "An unofficial TypeScript wrapper for the Fightcade API.",
   "main": "dist/fightcade-api.js",
+  "module": "dist/fightcade-api.mjs",
   "types": "dist/fightcade-api.d.ts",
   "files": ["/dist"],
-  "scripts": {
-    "build": "tsc",
-    "prepublishOnly": "npm run build"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/xBiggs/fightcade-api.git"
@@ -19,8 +16,17 @@
     "url": "https://github.com/xBiggs/fightcade-api/issues"
   },
   "homepage": "https://github.com/xBiggs/fightcade-api#readme",
+  "scripts": {
+    "clean": "rm -rf ./dist && echo 'Done.'",
+    "bundle": "bun x tsup ./src/fightcade-api.ts --format cjs,esm --dts"
+  },
   "devDependencies": {
-    "@types/node": "^18.0.6",
-    "typescript": "^4.7.4"
+    "@types/node": "^20.6.0",
+    "bun-types": "latest",
+    "tsup": "^7.2.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "zod": "^3.22.2"
   }
 }

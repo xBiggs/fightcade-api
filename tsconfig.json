@@ -1,14 +1,23 @@
 {
   "compilerOptions": {
-    "types": ["node"],
-    "typeRoots": [ "../node_modules/@types"],
-    "module": "commonjs",
-    "target": "es2022",
+    "lib": ["ESNext"],
+    "module": "esnext",
+    "target": "esnext",
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "composite": true,
     "strict": true,
-    "esModuleInterop": true,
+    "downlevelIteration": true,
     "skipLibCheck": true,
+    "jsx": "preserve",
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
+    "allowJs": true,
+    "types": [
+      "bun-types" // add Bun global
+    ],
     "allowUnusedLabels": false,
     "allowUnreachableCode": false,
     "exactOptionalPropertyTypes": true,
@@ -19,9 +28,9 @@
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "importsNotUsedAsValues": "error",
     "checkJs": true,
     "declaration": true,
     "outDir": "./dist"
-  }
+  },
+  "include": ["src/**/*"]
 }
