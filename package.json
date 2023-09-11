@@ -26,7 +26,7 @@
   "homepage": "https://github.com/xBiggs/fightcade-api#readme",
   "scripts": {
     "clean": "rm -rf ./dist && echo 'Done.'",
-    "bundle": "bun x tsup ./src/fightcade-api.mts --format cjs,esm --dts"
+    "bundle": "bun x tsup ./src/fightcade-api.ts --format cjs,esm --dts"
   },
   "devDependencies": {
     "@types/node": "^20.6.0",

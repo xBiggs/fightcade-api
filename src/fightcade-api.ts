@@ -779,4 +779,4 @@ export default {
   GetRankings: Fightcade.GetRankings,
   GetGame: Fightcade.GetGame,
   GetEvents: Fightcade.GetEvents,
-} as const;
+};
