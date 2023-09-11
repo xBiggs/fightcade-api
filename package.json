@@ -1,17 +1,22 @@
 {
   "name": "fightcade-api",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "An unofficial TypeScript wrapper for the Fightcade API.",
   "type": "module",
-  "main": "dist/fightcade-api.js",
-  "module": "dist/fightcade-api.js",
-  "types": "dist/fightcade-api.d.ts",
-  "files": ["/dist"],
+  "main": "./dist/fightcade-api.cjs",
+  "module": "./dist/fightcade-api.js",
+  "types": "./dist/fightcade-api.d.ts",
+  "files": ["./dist"],
   "exports": {
     ".": {
-      "import": "./dist/fightcase-api.js",
-      "require": "./dist/fightcade-api.cjs",
-      "types": "./dist/fightcade-api.d.ts"
+      "import": {
+        "types": "./dist/fightcade-api.d.ts",
+        "default": "./dist/fightcade-api.js"
+      },
+      "require": {
+        "types": "./dist/fightcade-api.d.cts",
+        "default": "./dist/fightcade-api.cjs"
+      }
     }
   },
   "repository": {
