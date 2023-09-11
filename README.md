@@ -4,7 +4,7 @@ An unofficial TypeScript wrapper for the [Fightcade](https://www.fightcade.com/)
 ## Installation
 
 ```sh-session
-bun install fightcade-api
+bun add fightcade-api
 ```
 
 ```sh-session
