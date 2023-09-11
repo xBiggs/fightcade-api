@@ -15,6 +15,10 @@ pnpm install fightcade-api
 npm install fightcade-api
 ```
 
+```sh-session
+yarn add fightcade-api
+```
+
 ## Example usage
 
 This library supports TS, ESM, and CommonJS.
