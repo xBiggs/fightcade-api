@@ -176,6 +176,7 @@ export namespace Fightcade {
     results: ReplaySchema.array(),
     count: z.number(),
   });
+
   const ReplayResultsResponseSchema = ResponseSchema.merge(z.object({results: ReplayResultsSchema}));
 
   const VideoURLResponse = z.record(z.string());
@@ -313,7 +314,7 @@ export namespace Fightcade {
    * }}
    * ```
    */
-  export async function GetUser(username: string): Promise<User> {
+  export async function GetUser(username: string): Promise<Fightcade.User> {
     const response = await fetch(URL.API, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -335,7 +336,7 @@ export namespace Fightcade {
    * console.log(date.toString());
    * ```
    */
-  export async function GetReplay(quarkid: string): Promise<Replay> {
+  export async function GetReplay(quarkid: string): Promise<Fightcade.Replay> {
     const response = await fetch(URL.API, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -354,7 +355,7 @@ export namespace Fightcade {
    * replays.forEach(replay => console.log(replay.channelname));
    * ```
    */
-  export async function GetReplays(): Promise<Replay[]>;
+  export async function GetReplays(): Promise<Fightcade.Replay[]>;
   /**
    * Get Newest Fightcade Replays
    *
@@ -366,7 +367,7 @@ export namespace Fightcade {
    * replays.forEach(replay => console.log(replay.channelname));
    * ```
    */
-  export async function GetReplays(limit: number): Promise<Replay[]>;
+  export async function GetReplays(limit: number): Promise<Fightcade.Replay[]>;
   /**
    * Get Newest Fightcade Replays
    *
@@ -379,7 +380,7 @@ export namespace Fightcade {
    * replays.forEach(replay => console.log(replay.channelname));
    * ```
    */
-  export async function GetReplays(limit: number, offset: number): Promise<Replay[]>;
+  export async function GetReplays(limit: number, offset: number): Promise<Fightcade.Replay[]>;
   /**
    * Get Newest Fightcade Replays
    *
@@ -393,7 +394,7 @@ export namespace Fightcade {
    * replays.forEach(replay => console.log(replay.channelname));
    * ```
    */
-  export async function GetReplays(limit: number, offset: number, best: boolean): Promise<Replay[]>;
+  export async function GetReplays(limit: number, offset: number, best: boolean): Promise<Fightcade.Replay[]>;
   /**
    * Get Newest Fightcade Replays
    *
@@ -409,8 +410,8 @@ export namespace Fightcade {
    * replays.forEach(replay => console.log(replay.channelname));
    * ```
    */
-  export async function GetReplays(limit: number, offset: number, best: boolean, since: number): Promise<Replay[]>;
-  export async function GetReplays(limit = 15, offset = 0, best = false, since = 0): Promise<Replay[]> {
+  export async function GetReplays(limit: number, offset: number, best: boolean, since: number): Promise<Fightcade.Replay[]>;
+  export async function GetReplays(limit = 15, offset = 0, best = false, since = 0): Promise<Fightcade.Replay[]> {
     const response = await fetch(URL.API, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -431,7 +432,7 @@ export namespace Fightcade {
    * replays.forEach(replay => console.log(replay.channelname));
    * ```
    */
-  export async function GetUserReplays(username: string): Promise<Replay[]>;
+  export async function GetUserReplays(username: string): Promise<Fightcade.Replay[]>;
   /**
    * Get Fightcade User's Newest Replays
    *
@@ -445,7 +446,7 @@ export namespace Fightcade {
    * replays.forEach(replay => console.log(replay.channelname));
    * ```
    */
-  export async function GetUserReplays(username: string, limit: number): Promise<Replay[]>;
+  export async function GetUserReplays(username: string, limit: number): Promise<Fightcade.Replay[]>;
   /**
    * Get Fightcade User's Newest Replays
    *
@@ -460,7 +461,7 @@ export namespace Fightcade {
    * replays.forEach(replay => console.log(replay.channelname));
    * ```
    */
-  export async function GetUserReplays(username: string, limit: number, offset: number): Promise<Replay[]>;
+  export async function GetUserReplays(username: string, limit: number, offset: number): Promise<Fightcade.Replay[]>;
   /**
    * Get Fightcade User's Newest Replays
    *
@@ -476,7 +477,7 @@ export namespace Fightcade {
    * replays.forEach(replay => console.log(replay.channelname));
    * ```
    */
-  export async function GetUserReplays(username: string, limit: number, offset: number, best: boolean): Promise<Replay[]>;
+  export async function GetUserReplays(username: string, limit: number, offset: number, best: boolean): Promise<Fightcade.Replay[]>;
   /**
    * Get Fightcade User's Newest Replays
    *
@@ -494,8 +495,8 @@ export namespace Fightcade {
    * replays.forEach(replay => console.log(replay.channelname));
    * ```
    */
-  export async function GetUserReplays(username: string, limit: number, offset: number, best: boolean, since: number): Promise<Replay[]>;
-  export async function GetUserReplays(username: string, limit = 15, offset = 0, best = false, since = 0): Promise<Replay[]> {
+  export async function GetUserReplays(username: string, limit: number, offset: number, best: boolean, since: number): Promise<Fightcade.Replay[]>;
+  export async function GetUserReplays(username: string, limit = 15, offset = 0, best = false, since = 0): Promise<Fightcade.Replay[]> {
     const response = await fetch(URL.API, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -515,7 +516,7 @@ export namespace Fightcade {
    * user_replays.forEach(replay => console.log(Fightcade.GetReplayURL(replay)));
    * ```
    */
-  export const GetReplayURL = (replay: Replay) => `${URL.REPLAY}${replay.emulator}/${replay.gameid}/${replay.quarkid}`;
+  export const GetReplayURL = (replay: Fightcade.Replay) => `${URL.REPLAY}${replay.emulator}/${replay.gameid}/${replay.quarkid}`;
 
   /**
    * Get FightcadeVids URL of Fightcade Replay if it exists
@@ -543,8 +544,8 @@ export namespace Fightcade {
    * console.log(url ?? 'Replay not found.');
    * ```
    */
-  export async function GetVideoURL(replay: Replay): Promise<string>;
-  export async function GetVideoURL(replay: string | Replay): Promise<string> {
+  export async function GetVideoURL(replay: Fightcade.Replay): Promise<string>;
+  export async function GetVideoURL(replay: string | Fightcade.Replay): Promise<string> {
     const response = await fetch(URL.VIDS, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -568,7 +569,7 @@ export namespace Fightcade {
    * for (const uid in urls) console.log(urls[uid]);
    * ```
    */
-  export async function GetVideoURLs(replays: string[]): Promise<VideoURLs>;
+  export async function GetVideoURLs(replays: string[]): Promise<Fightcade.VideoURLs>;
   /**
    * Get a list of FightcadeVids URLs from a list of Fightcade Replays if they exist
    *
@@ -582,8 +583,8 @@ export namespace Fightcade {
    * for (const uid in urls) console.log(urls[uid]);
    * ```
    */
-  export async function GetVideoURLs(replays: Replay[]): Promise<VideoURLs>;
-  export async function GetVideoURLs(replays: string[] | Replay[]): Promise<VideoURLs> {
+  export async function GetVideoURLs(replays: Fightcade.Replay[]): Promise<Fightcade.VideoURLs>;
+  export async function GetVideoURLs(replays: string[] | Fightcade.Replay[]): Promise<Fightcade.VideoURLs> {
     const response = await fetch(URL.VIDS, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -607,7 +608,7 @@ export namespace Fightcade {
    * }});
    * ```
    */
-  export async function GetRankings(gameid: string): Promise<Player[]>;
+  export async function GetRankings(gameid: string): Promise<Fightcade.Player[]>;
   /**
    * Get Fightcade Game's Top Ranked Players
    *
@@ -624,7 +625,7 @@ export namespace Fightcade {
    * }});
    * ```
    */
-  export async function GetRankings(gameid: string, limit: number): Promise<Player[]>;
+  export async function GetRankings(gameid: string, limit: number): Promise<Fightcade.Player[]>;
   /**
    * Get Fightcade Game's Top Ranked Players
    *
@@ -642,7 +643,7 @@ export namespace Fightcade {
    * }});
    * ```
    */
-  export async function GetRankings(gameid: string, limit: number, offset: number): Promise<Player[]>;
+  export async function GetRankings(gameid: string, limit: number, offset: number): Promise<Fightcade.Player[]>;
   /**
    * Get Fightcade Game's Top Ranked Players
    *
@@ -661,7 +662,7 @@ export namespace Fightcade {
    * }});
    * ```
    */
-  export async function GetRankings(gameid: string, limit: number, offset: number, byElo: boolean): Promise<Player[]>;
+  export async function GetRankings(gameid: string, limit: number, offset: number, byElo: boolean): Promise<Fightcade.Player[]>;
   /**
    * Get Fightcade Game's Top Ranked Players
    *
@@ -681,8 +682,8 @@ export namespace Fightcade {
    * }});
    * ```
    */
-  export async function GetRankings(gameid: string, limit: number, offset: number, byElo: boolean, recent: boolean): Promise<Player[]>;
-  export async function GetRankings(gameid: string, limit = 15, offset = 0, byElo = true, recent = true): Promise<Player[]> {
+  export async function GetRankings(gameid: string, limit: number, offset: number, byElo: boolean, recent: boolean): Promise<Fightcade.Player[]>;
+  export async function GetRankings(gameid: string, limit = 15, offset = 0, byElo = true, recent = true): Promise<Fightcade.Player[]> {
     const response = await fetch(URL.API, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -703,7 +704,7 @@ export namespace Fightcade {
    * console.log(game.publisher);
    * ```
    */
-  export async function GetGame(gameid: string): Promise<Game> {
+  export async function GetGame(gameid: string): Promise<Fightcade.Game> {
     const response = await fetch(URL.API, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -725,7 +726,7 @@ export namespace Fightcade {
    * events.forEach(event => console.log(event));
    * ```
    */
-  export async function GetEvents(gameid: string): Promise<Event[]>;
+  export async function GetEvents(gameid: string): Promise<Fightcade.Event[]>;
   /**
    * Get Fightcade Game's Active Events
    *
@@ -740,7 +741,7 @@ export namespace Fightcade {
    * events.forEach(event => console.log(event));
    * ```
    */
-  export async function GetEvents(gameid: string, limit: number): Promise<Event[]>;
+  export async function GetEvents(gameid: string, limit: number): Promise<Fightcade.Event[]>;
   /**
    * Get Fightcade Game's Active Events
    *
@@ -756,8 +757,8 @@ export namespace Fightcade {
    * events.forEach(event => console.log(event));
    * ```
    */
-  export async function GetEvents(gameid: string, limit: number, offset: number): Promise<Event[]>;
-  export async function GetEvents(gameid: string, limit = 15, offset = 0): Promise<Event[]> {
+  export async function GetEvents(gameid: string, limit: number, offset: number): Promise<Fightcade.Event[]>;
+  export async function GetEvents(gameid: string, limit = 15, offset = 0): Promise<Fightcade.Event[]> {
     const response = await fetch(URL.API, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -767,16 +768,14 @@ export namespace Fightcade {
   }
 };
 
-export default {
-  Rank: Fightcade.Rank,
-  GetUser: Fightcade.GetUser,
-  GetReplay: Fightcade.GetReplay,
-  GetReplays: Fightcade.GetReplays,
-  GetUserReplays: Fightcade.GetUserReplays,
-  GetReplayURL: Fightcade.GetReplayURL,
-  GetVideoURL: Fightcade.GetVideoURL,
-  GetVideoURLs: Fightcade.GetVideoURLs,
-  GetRankings: Fightcade.GetRankings,
-  GetGame: Fightcade.GetGame,
-  GetEvents: Fightcade.GetEvents,
-};
+export const Rank = Fightcade.Rank;
+export const GetUser = Fightcade.GetUser;
+export const GetReplay = Fightcade.GetReplay;
+export const GetReplays = Fightcade.GetReplays;
+export const GetUserReplays = Fightcade.GetUserReplays;
+export const GetReplayURL = Fightcade.GetReplayURL;
+export const GetVideoURL = Fightcade.GetVideoURL;
+export const GetVideoURLs = Fightcade.GetVideoURLs;
+export const GetRankings = Fightcade.GetRankings;
+export const GetGame = Fightcade.GetGame;
+export const GetEvents = Fightcade.GetEvents;

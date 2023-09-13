@@ -21,6 +21,8 @@ yarn add fightcade-api
 
 ## Example usage
 
+There are several examples provided in the source's TSDoc.
+
 This library supports TS, ESM, and CommonJS.
 
 #### ECMAScript Modules
@@ -38,16 +40,13 @@ import { GetUser } from 'fightcade-api';
 #### CommonJS
 
 ```ts
-const Fightcade = require('fightcade-api').default;
+const Fightcade = require('fightcade-api');
 ```
-
-
-There are several examples provided in the source's TSDoc.
 
 ### GetUser
 
 ```ts
-async function GetUser(username: string): Promise<User>
+async function GetUser(username: string): Promise<Fightcade.User>
 ```
 
 ```ts
@@ -70,7 +69,7 @@ try {
 ### GetReplay
 
 ```ts
-async function GetReplay(quarkid: string): Promise<Replay>
+async function GetReplay(quarkid: string): Promise<Fightcade.Replay>
 ```
 
 ```ts
@@ -90,12 +89,12 @@ try {
 ### GetReplays
 
 ```ts
-async function GetReplays(): Promise<Replay[]>
-async function GetReplays(limit: number): Promise<Replay[]>
-async function GetReplays(limit: number, offset: number): Promise<Replay[]>
-async function GetReplays(limit: number, offset: number, best: boolean): Promise<Replay[]>
-async function GetReplays(limit: number, offset: number, best: boolean, since: number): Promise<Replay[]>
-async function GetReplays(limit = 15, offset = 0, best = false, since = 0): Promise<Replay[]>
+async function GetReplays(): Promise<Fightcade.Replay[]>
+async function GetReplays(limit: number): Promise<Fightcade.Replay[]>
+async function GetReplays(limit: number, offset: number): Promise<Fightcade.Replay[]>
+async function GetReplays(limit: number, offset: number, best: boolean): Promise<Fightcade.Replay[]>
+async function GetReplays(limit: number, offset: number, best: boolean, since: number): Promise<Fightcade.Replay[]>
+async function GetReplays(limit = 15, offset = 0, best = false, since = 0): Promise<Fightcade.Replay[]>
 ```
 
 ```ts
@@ -113,12 +112,12 @@ try {
 ### GetUserReplays
 
 ```ts
-async function GetUserReplays(username: string): Promise<Replay[]>
-async function GetUserReplays(username: string, limit: number): Promise<Replay[]>
-async function GetUserReplays(username: string, limit: number, offset: number): Promise<Replay[]>
-async function GetUserReplays(username: string, limit: number, offset: number, best: boolean): Promise<Replay[]>
-async function GetUserReplays(username: string, limit: number, offset: number, best: boolean, since: number): Promise<Replay[]>
-async function GetUserReplays(username: string, limit = 15, offset = 0, best = false, since = 0): Promise<Replay[]>
+async function GetUserReplays(username: string): Promise<Fightcade.Replay[]>
+async function GetUserReplays(username: string, limit: number): Promise<Fightcade.Replay[]>
+async function GetUserReplays(username: string, limit: number, offset: number): Promise<Fightcade.Replay[]>
+async function GetUserReplays(username: string, limit: number, offset: number, best: boolean): Promise<Fightcade.Replay[]>
+async function GetUserReplays(username: string, limit: number, offset: number, best: boolean, since: number): Promise<Fightcade.Replay[]>
+async function GetUserReplays(username: string, limit = 15, offset = 0, best = false, since = 0): Promise<Fightcade.Replay[]>
 ```
 
 ```ts
@@ -137,7 +136,7 @@ try {
 ### GetReplayURL
 
 ```ts
-function GetReplayURL(replay: Replay): string
+function GetReplayURL(replay: Fightcade.Replay): string
 ```
 
 ```ts
@@ -157,8 +156,8 @@ try {
 
 ```ts
 async function GetVideoURL(replay: string): Promise<string>
-async function GetVideoURL(replay: Replay): Promise<string>
-async function GetVideoURL(replay: string | Replay): Promise<string>
+async function GetVideoURL(replay: Fightcade.Replay): Promise<string>
+async function GetVideoURL(replay: string | Fightcade.Replay): Promise<string>
 ```
 
 ```ts
@@ -178,9 +177,9 @@ try {
 ### GetVideoURLs
 
 ```ts
-async function GetVideoURLs(replays: string[]): Promise<VideoURLs>
-async function GetVideoURLs(replays: Replay[]): Promise<VideoURLs>
-async function GetVideoURLs(replays: string[] | Replay[]): Promise<VideoURLs>
+async function GetVideoURLs(replays: string[]): Promise<Fightcade.VideoURLs>
+async function GetVideoURLs(replays: Replay[]): Promise<Fightcade.VideoURLs>
+async function GetVideoURLs(replays: string[] | Replay[]): Promise<Fightcade.VideoURLs>
 ```
 
 ```ts
@@ -199,12 +198,12 @@ try {
 ### GetRankings
 
 ```ts
-async function GetRankings(gameid: string): Promise<Player[]>
-async function GetRankings(gameid: string, limit: number): Promise<Player[]>
-async function GetRankings(gameid: string, limit: number, offset: number): Promise<Player[]>
-async function GetRankings(gameid: string, limit: number, offset: number, byElo: boolean): Promise<Player[]>
-async function GetRankings(gameid: string, limit: number, offset: number, byElo: boolean, recent: boolean): Promise<Player[]>
-async function GetRankings(gameid: string, limit = 15, offset = 0, byElo = true, recent = true): Promise<Player[]>
+async function GetRankings(gameid: string): Promise<Fightcade.Player[]>
+async function GetRankings(gameid: string, limit: number): Promise<Fightcade.Player[]>
+async function GetRankings(gameid: string, limit: number, offset: number): Promise<Fightcade.Player[]>
+async function GetRankings(gameid: string, limit: number, offset: number, byElo: boolean): Promise<Fightcade.Player[]>
+async function GetRankings(gameid: string, limit: number, offset: number, byElo: boolean, recent: boolean): Promise<Fightcade.Player[]>
+async function GetRankings(gameid: string, limit = 15, offset = 0, byElo = true, recent = true): Promise<Fightcade.Player[]>
 ```
 
 ```ts
@@ -227,7 +226,7 @@ try {
 ### GetGame
 
 ```ts
-async function GetGame(gameid: string): Promise<Game>
+async function GetGame(gameid: string): Promise<Fightcade.Game>
 ```
 
 ```ts
@@ -246,9 +245,9 @@ try {
 ### GetEvents
 
 ```ts
-async function GetEvents(gameid: string): Promise<Event[]>
-async function GetEvents(gameid: string, limit: number, offset: number): Promise<Event[]>
-async function GetEvents(gameid: string, limit = 15, offset = 0): Promise<Event[]>
+async function GetEvents(gameid: string): Promise<Fightcade.Event[]>
+async function GetEvents(gameid: string, limit: number, offset: number): Promise<Fightcade.Event[]>
+async function GetEvents(gameid: string, limit = 15, offset = 0): Promise<Fightcade.Event[]>
 ```
 
 ```ts
