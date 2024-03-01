@@ -3,12 +3,12 @@ import { z } from 'zod';
 export namespace Fightcade {
   const ResponseSchema = z.object({res: z.literal('OK')});
 
-  const RankSchema = z.nativeEnum({Unranked: 0, E: 1, D: 2, C: 3, B: 4, A: 5, S: 6} as const);
+  const RankEnumSchema = z.nativeEnum({Unranked: 0, E: 1, D: 2, C: 3, B: 4, A: 5, S: 6} as const);
 
-  export type Rank = z.infer<typeof RankSchema>;
+  export type RankEnum = z.infer<typeof RankEnumSchema>;
 
   const GameInfoSchema = z.record(z.object({
-    rank: z.optional(z.nullable(RankSchema)),
+    rank: z.optional(z.nullable(RankEnumSchema)),
     num_matches: z.optional(z.number()),
     last_match: z.optional(z.number()),
     time_played: z.number(),
@@ -22,20 +22,19 @@ export namespace Fightcade {
    * @param num_matches - Amount of Ranked Games Played
    * @param last_match - Last Match Played Millisecond Epoch Date Timestamp
    * @param time_played - Time Played in Milliseconds.
+   *
    * @example
-   * ```ts
-   * // Print the user 'biggs' amount of ranked matches per game.
-   * const username = 'biggs';
-   * const user = await Fightcade.GetUser(username);
-   * for (const gameid in user.gameinfo) {
-   *   if (user.gameinfo[gameid].rank) {
-   *    console.log(`${gameid}: ${user.gameinfo[gameid].num_matches}`);
-   * }}
+   * ```js
+   * // Print the amount of ranked matches per game for the user 'biggs'.
+   * const user = await Fightcade.GetUser('biggs');
+   * Object.entries(user.gameinfo).forEach(([gameid, gameinfo]) => {
+   *   if (gameinfo.rank) console.log(`${gameid}: ${gameinfo.num_matches}`);
+   * });
    * ```
    */
   export type GameInfo = {
     [gameid: string]: {
-      rank?: Rank | null,
+      rank?: RankEnum | null,
       num_matches?: number,
       last_match?: number,
       time_played: number
@@ -60,11 +59,11 @@ export namespace Fightcade {
    * @param last_online - Last Logout Millisecond Epoch Date Timestamp
    * @param date - Account Creation Millisecond Epoch Date Timestamp
    * @param gameinfo - Fightcade GameInfo
+   *
    * @example
-   * ```ts
-   * // Print the user 'biggs' account creation date.
-   * const username = 'biggs';
-   * const user = await Fightcade.GetUser(username);
+   * ```js
+   * // Print the account creation date for the user 'biggs'.
+   * const user = await Fightcade.GetUser('biggs');
    * const date = new Date(user.date);
    * console.log(date.toString());
    * ```
@@ -82,15 +81,12 @@ export namespace Fightcade {
    *
    * @param iso_code - `ISO 3166-1 alpha2` Country Code
    * @param full_name - Country Name
+   *
    * @example
-   * ```ts
-   * // Print the player names and countries from replay '1638725293444-1085'.
-   * const quarkid = '1638725293444-1085';
-   * const replay = await Fightcade.GetReplay(quarkid);
-   * replay.players.forEach(player => {
-   *  if (typeof player.country === 'string') console.log(`${player.name}: ${player.country}`);
-   *  else console.log(`${player.name}: ${player.country.full_name}`);
-   * });
+   * ```js
+   * // Print the player names and countries from the replay '1638725293444-1085'.
+   * const replay = await Fightcade.GetReplay('1638725293444-1085');
+   * replay.players.forEach(player => console.log(`${player.name}: ${(typeof player.country === 'string') ? player.country : player.country.full_name}`));
    * ```
    */
   export type Country = z.infer<typeof CountrySchema>;
@@ -98,7 +94,7 @@ export namespace Fightcade {
   const PlayerSchema = z.object({
     name: z.string(),
     country: CountrySchema.or(z.string()),
-    rank: z.optional(z.nullable(RankSchema)),
+    rank: z.optional(z.nullable(RankEnumSchema)),
     score: z.optional(z.nullable(z.number())),
     gameinfo: z.optional(GameInfoSchema),
   });
@@ -112,13 +108,10 @@ export namespace Fightcade {
    * @param gameinfo - GameInfo Object
    *
    * @example
-   * ```ts
-   * // Print the player names from replay '1638725293444-1085'.
-   * const quarkid = '1638725293444-1085'
-   * const replay = await Fightcade.GetReplay(quarkid);
-   * replay.players.forEach(player => {
-   *  console.log(player.name);
-   * });
+   * ```js
+   * // Print the player names from the replay '1638725293444-1085'.
+   * const replay = await Fightcade.GetReplay('1638725293444-1085');
+   * replay.players.forEach(player => console.log(player.name));
    * ```
    */
   export type Player = z.infer<typeof PlayerSchema>;
@@ -162,10 +155,9 @@ export namespace Fightcade {
    * @param saved_views - Amount of Replay Views
    *
    * @example
-   * ```ts
-   * // Print the date of replay '1638725293444-1085'.
-   * const quarkid = '1638725293444-1085';
-   * const replay = await Fightcade.GetReplay(quarkid);
+   * ```js
+   * // Print the date of the replay '1638725293444-1085'.
+   * const replay = await Fightcade.GetReplay('1638725293444-1085');
    * const date = new Date(replay.date);
    * console.log(date.toString());
    * ```
@@ -188,11 +180,11 @@ export namespace Fightcade {
    * @param quarkid - Object Values are FightcadeVids URLs
    *
    * @example
-   * ```ts
+   * ```js
    * // Print the FightcadeVids URLs of the provided Challenge IDs if there are any.
    * const quarkids = ['1638725293444-1085', '1631056456752-7358', '1650423155905-2091'];
    * const urls = await Fightcade.GetVideoURLs(quarkids);
-   * for (const quarkid in urls) console.log(urls[quarkid]);
+   * Object.values(urls).forEach(url => console.log(url));
    * ```
    */
   export type VideoURLs = {
@@ -224,15 +216,14 @@ export namespace Fightcade {
    * @param emulator - Game Emulator
    * @param available_for - ???
    * @param system - Fightcade System Name
-   * @param ranked - Ranked Matchmaking Available?
-   * @param training - Training Mode Available?
+   * @param ranked - Ranked Matchmaking Available
+   * @param training - Training Mode Available
    * @param genres - Game Genre Tag List
    *
    * @example
-   * ```ts
-   * // Prints the publisher of the game.
-   * const gameid = 'umk3';
-   * const game = await Fightcade.GetGame(gameid);
+   * ```js
+   * // Prints the publisher of the game 'umk3'.
+   * const game = await Fightcade.GetGame('umk3');
    * console.log(game.publisher);
    * ```
    */
@@ -260,11 +251,11 @@ export namespace Fightcade {
    * @param link - Event URL
    * @param region - Event Region
    * @param stream - Event Livestream URL
+   *
    * @example
-   * ```ts
+   * ```js
    * // Print the 15 most recent active event names for 'garou'.
-   * const gameid = 'garou';
-   * const events = await Fightcade.GetEvents(gameid);
+   * const events = await Fightcade.GetEvents('garou');
    * events.forEach(event => console.log(event.name));
    * ```
    */
@@ -287,7 +278,7 @@ export namespace Fightcade {
    * Fightcade Rank
    *
    * @example
-   * ```ts
+   * ```js
    * // Print the top 15 ranked UMK3 players and their ranks
    * const gameid = 'umk3';
    * const rankings = await Fightcade.GetRankings(gameid);
@@ -303,15 +294,14 @@ export namespace Fightcade {
    * Get Fightcade User Info by Username
    *
    * @param username - Fightcade Username
+   *
    * @example
-   * ```ts
-   * // Print the amount of ranked matches per game for the user 'biggs'
-   * const username = 'biggs';
-   * const user = await Fightcade.GetUser(username);
-   * for (const gameid in user.gameinfo) {
-   *   if (user.gameinfo[gameid].rank) {
-   *     console.log(`${gameid}: ${user.gameinfo[gameid].num_matches}`);
-   * }}
+   * ```js
+   * // Print the amount of ranked matches per game for the user 'biggs'.
+   * const user = await Fightcade.GetUser('biggs');
+   * Object.entries(user.gameinfo).forEach(([gameid, gameinfo]) => {
+   *   if (gameinfo.rank) console.log(`${gameid}: ${gameinfo.num_matches}`);
+   * });
    * ```
    */
   export async function GetUser(username: string): Promise<Fightcade.User> {
@@ -327,11 +317,11 @@ export namespace Fightcade {
    * Get Fightcade Replay by Challenge ID
    *
    * @param quarkid - Fightcade Challenge ID
+   *
    * @exmaple
-   * ```ts
+   * ```js
    * // Print the date of the replay '1638725293444-1085'
-   * const quarkid = '1638725293444-1085';
-   * const replay = await Fightcade.GetReplay(quarkid);
+   * const replay = await Fightcade.GetReplay('1638725293444-1085');
    * const date = new Date(replay.date);
    * console.log(date.toString());
    * ```
@@ -349,7 +339,7 @@ export namespace Fightcade {
    * Get Newest Fightcade Replays
    *
    * @example
-   * ```ts
+   * ```js
    * // Print the game channel names of the 15 most recent replays.
    * const replays = await Fightcade.GetReplays();
    * replays.forEach(replay => console.log(replay.channelname));
@@ -357,65 +347,29 @@ export namespace Fightcade {
    */
   export async function GetReplays(): Promise<Fightcade.Replay[]>;
   /**
-   * Get Newest Fightcade Replays
+   * Get Fightcade Replays
    *
-   * @param limit - `default: 15` Amount of Replays to request beginning from `0`
-   * @example
-   * ```ts
-   * // Print the game channel names of the 30 most recent replays.
-   * const replays = await Fightcade.GetReplays(30);
-   * replays.forEach(replay => console.log(replay.channelname));
-   * ```
-   */
-  export async function GetReplays(limit: number): Promise<Fightcade.Replay[]>;
-  /**
-   * Get Newest Fightcade Replays
+   * @param args.gameid - `default: undefined` Fightcade ROM Name
+   * @param args.limit - `default: 15` Amount of Replays to request beginning from `offset`
+   * @param args.offset - `default: 0` Newest Replay number to request
+   * @param args.best - `default: false` Sort Replays by Fightcade Player Elo
+   * @param args.since - `default: 0` Millisecond Epoch Timestamp Date
    *
-   * @param limit - `default: 15` Amount of Replays to request beginning from `offset`
-   * @param offset - `default: 0` Newest Replay number to request
    * @example
-   * ```ts
-   * // Print the game channel names of the 30 most recent replays.
-   * const replays = await Fightcade.GetReplays(30, 0);
-   * replays.forEach(replay => console.log(replay.channelname));
-   * ```
-   */
-  export async function GetReplays(limit: number, offset: number): Promise<Fightcade.Replay[]>;
-  /**
-   * Get Newest Fightcade Replays
-   *
-   * @param limit - `default: 15` Amount of Replays to request beginning from `offset`
-   * @param offset - `default: 0` Newest Replay number to request
-   * @param best - `default: false` Sort Replays by Fightcade Player Elo
-   * @example
-   * ```ts
-   * // Print the game channel names of the 5 most recent best replays.
-   * const replays = await Fightcade.GetReplays(5, 0, true);
-   * replays.forEach(replay => console.log(replay.channelname));
-   * ```
-   */
-  export async function GetReplays(limit: number, offset: number, best: boolean): Promise<Fightcade.Replay[]>;
-  /**
-   * Get Newest Fightcade Replays
-   *
-   * @param limit - `default: 15` Amount of Replays to request beginning from `offset`
-   * @param offset - `default: 0` Newest Replay number to request
-   * @param best - `default: false` Sort Replays by Fightcade Player Elo
-   * @param since - `default: 0` Millisecond Epoch Timestamp Date
-   * @example
-   * ```ts
-   * // Print the game channel names of the 5 most recent best replays since '2022-07-17T04:30:10.798Z'.
+   * ```js
+   * // Print the game channel names of the 5 best most recent replays since '2022-07-17T04:30:10.798Z'.
    * const date = new Date('2022-07-17T04:30:10.798Z');
-   * const replays = await Fightcade.GetReplays(5, 0, true, date.getTime());
+   * const replays = await Fightcade.GetReplays({limit: 5, best: true, since: date.getTime()});
    * replays.forEach(replay => console.log(replay.channelname));
    * ```
    */
-  export async function GetReplays(limit: number, offset: number, best: boolean, since: number): Promise<Fightcade.Replay[]>;
-  export async function GetReplays(limit = 15, offset = 0, best = false, since = 0): Promise<Fightcade.Replay[]> {
+  export async function GetReplays(args: {gameid?: string, limit?: number, offset?: number, best?: boolean, since?: number}): Promise<Fightcade.Replay[]>;
+  export async function GetReplays(args = {}): Promise<Fightcade.Replay[]> {
+    // gameid = undefined, limit = 15, offset = 0, best = false, since = 0
     const response = await fetch(URL.API, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({req: 'searchquarks', limit, offset, best, since}),
+      body: JSON.stringify({req: 'searchquarks', ...args}),
     });
     return ReplayResultsResponseSchema.parse(await response.json()).results.results;
   }
@@ -424,11 +378,11 @@ export namespace Fightcade {
    * Get Fightcade User's Newest Replays
    *
    * @param username - Fightcade Username
+   *
    * @example
-   * ```ts
+   * ```js
    * // Print the game channel names of the 15 most recent replays belonging to the user 'biggs'.
-   * const username = 'biggs';
-   * const replays = await Fightcade.GetUserReplays(username);
+   * const replays = await Fightcade.GetUserReplays('biggs');
    * replays.forEach(replay => console.log(replay.channelname));
    * ```
    */
@@ -437,70 +391,26 @@ export namespace Fightcade {
    * Get Fightcade User's Newest Replays
    *
    * @param username - Fightcade Username
-   * @param limit - `default: 15` Amount of Replays to request beginning from `0`
-   * @example
-   * ```ts
-   * // Print the game channel names of the 30 most recent replays belonging to the user 'biggs'.
-   * const username = 'biggs';
-   * const replays = await Fightcade.GetUserReplays(username, 30);
-   * replays.forEach(replay => console.log(replay.channelname));
-   * ```
-   */
-  export async function GetUserReplays(username: string, limit: number): Promise<Fightcade.Replay[]>;
-  /**
-   * Get Fightcade User's Newest Replays
+   * @param args.limit - `default: 15` Amount of Replays to request beginning from `offset`
+   * @param args.offset - `default: 0` Newest Replay number to request
+   * @param args.best - `default: false` Sort Replays by Fightcade Player Elo
+   * @param args.since - `default: 0` Millisecond Epoch Timestamp Date
    *
-   * @param username - Fightcade Username
-   * @param limit - `default: 15` Amount of Replays to request beginning from `offset`
-   * @param offset - `default: 0` Newest Replay number to request
    * @example
-   * ```ts
-   * // Print the game channel names of the 30 most recent replays belonging to the user 'biggs'.
-   * const username = 'biggs';
-   * const replays = await Fightcade.GetUserReplays(username, 30, 0);
-   * replays.forEach(replay => console.log(replay.channelname));
-   * ```
-   */
-  export async function GetUserReplays(username: string, limit: number, offset: number): Promise<Fightcade.Replay[]>;
-  /**
-   * Get Fightcade User's Newest Replays
-   *
-   * @param username - Fightcade Username
-   * @param limit - `default: 15` Amount of Replays to request beginning from `offset`
-   * @param offset - `default: 0` Newest Replay number to request
-   * @param best - `default: false` Sort Replays by Fightcade Player Elo
-   * @example
-   * ```ts
-   * // Print the game channel names of the 30 most recent best replays belonging to the user 'biggs'.
-   * const username = 'biggs';
-   * const replays = await Fightcade.GetUserReplays(username, 30, 0, true);
-   * replays.forEach(replay => console.log(replay.channelname));
-   * ```
-   */
-  export async function GetUserReplays(username: string, limit: number, offset: number, best: boolean): Promise<Fightcade.Replay[]>;
-  /**
-   * Get Fightcade User's Newest Replays
-   *
-   * @param username - Fightcade Username
-   * @param limit - `default: 15` Amount of Replays to request beginning from `offset`
-   * @param offset - `default: 0` Newest Replay number to request
-   * @param best - `default: false` Sort Replays by Fightcade Player Elo
-   * @param since - `default: 0` Millisecond Epoch Timestamp Date
-   * @example
-   * ```ts
-   * // Print the game channel names of the 30 most recent best replays belonging to the user 'biggs' since '2022-07-17T04:30:10.798Z'.
-   * const username = 'biggs';
+   * ```js
+   * // Print the game channel names of the 30 best most recent replays for the user 'biggs' since '2022-07-17T04:30:10.798Z'.
    * const date = new Date('2022-07-17T04:30:10.798Z');
-   * const replays = await Fightcade.GetUserReplays(username, 30, 0, true, date.getTime());
+   * const replays = await Fightcade.GetUserReplays('biggs', {limit: 30, best: true, since: date.getTime()});
    * replays.forEach(replay => console.log(replay.channelname));
    * ```
    */
-  export async function GetUserReplays(username: string, limit: number, offset: number, best: boolean, since: number): Promise<Fightcade.Replay[]>;
-  export async function GetUserReplays(username: string, limit = 15, offset = 0, best = false, since = 0): Promise<Fightcade.Replay[]> {
+  export async function GetUserReplays(username: string, args: {limit?: number, offset?: number, best?: boolean, since?: number}): Promise<Fightcade.Replay[]>;
+  export async function GetUserReplays(username: string, args = {}): Promise<Fightcade.Replay[]> {
+    // limit = 15, offset = 0, best = false, since = 0
     const response = await fetch(URL.API, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({req: 'searchquarks', username, limit, offset, best, since}),
+      body: JSON.stringify({req: 'searchquarks', username, ...args}),
     });
     return ReplayResultsResponseSchema.parse(await response.json()).results.results;
   }
@@ -509,38 +419,41 @@ export namespace Fightcade {
    * Get Fightcade Replay URL
    *
    * @example
-   * ```ts
+   * ```js
    * // Print the replay URLs of the 15 most recent replays belonging to the user 'biggs'.
-   * const username = 'biggs';
-   * const user_replays = await Fightcade.GetUserReplays(username);
+   * const user_replays = await Fightcade.GetUserReplays('biggs');
    * user_replays.forEach(replay => console.log(Fightcade.GetReplayURL(replay)));
    * ```
    */
   export const GetReplayURL = (replay: Fightcade.Replay) => `${URL.REPLAY}${replay.emulator}/${replay.gameid}/${replay.quarkid}`;
 
   /**
+   * @deprecated `GetVideoURL()` is deprecated because `https://fightcadevids.com` is currently abandoned.
+   *
    * Get FightcadeVids URL of Fightcade Replay if it exists
    *
    * @param replay Fightcade Challenge ID
+   *
    * @example
-   * ```ts
+   * ```js
    * // Print the Replay's FightcadeVids URL.
-   * const quarkid = '1638725293444-1085';
-   * const replay = await Fightcade.GetReplay(quarkid);
+   * const replay = await Fightcade.GetReplay('1638725293444-1085');
    * const url = await Fightcade.GetVideoURL(replay);
    * console.log(url ?? 'Replay not found.');
    * ```
    */
   export async function GetVideoURL(replay: string): Promise<string>;
   /**
+   * @deprecated `GetVideoURL()` is deprecated because `https://fightcadevids.com` is currently abandoned.
+   *
    * Get FightcadeVids URL of Fightcade Replay if it exists
    *
    * @param replay Fightcade Replay Object
+   *
    * @example
-   * ```ts
+   * ```js
    * // Print the FightcadeVids URL by Challenge ID.
-   * const quarkid = '1638725293444-1085';
-   * const url = await Fightcade.GetVideoURL(quarkid);
+   * const url = await Fightcade.GetVideoURL('1638725293444-1085');
    * console.log(url ?? 'Replay not found.');
    * ```
    */
@@ -557,30 +470,36 @@ export namespace Fightcade {
   }
 
   /**
+   * @deprecated `GetVideoURLs()` is deprecated because `https://fightcadevids.com` is currently abandoned.
+   *
    * Get a list of FightcadeVids URLs from a list of Fightcade Replays if they exist
    *
    * @param replays Fightcade Challenge IDs
-   * @returns Empty if there are no valid URLs
+   * @returns Empty array if there are no valid URLs
+   *
    * @example
-   * ```ts
+   * ```js
    * // Print the FightcadeVids URLs of the provided Challenge IDs if there are any.
    * const quarkids = ['1638725293444-1085', '1631056456752-7358', '1650423155905-2091'];
    * const urls = await Fightcade.GetVideoURLs(quarkids);
-   * for (const uid in urls) console.log(urls[uid]);
+   * Object.values(urls).forEach(url => console.log(url));
    * ```
    */
   export async function GetVideoURLs(replays: string[]): Promise<Fightcade.VideoURLs>;
   /**
+   * @deprecated `GetVideoURLs()` is deprecated because `https://fightcadevids.com` is currently abandoned.
+   *
    * Get a list of FightcadeVids URLs from a list of Fightcade Replays if they exist
    *
    * @param replays Fightcade Replay Objects
-   * @returns Empty if there are no valid URLs
+   * @returns Empty array if there are no valid URLs
+   *
    * @example
-   * ```ts
+   * ```js
    * // Print the replay's FightcadeVids URLs if there are any.
    * const replays = await Fightcade.GetReplays();
    * const urls = await Fightcade.GetVideoURLs(replays);
-   * for (const uid in urls) console.log(urls[uid]);
+   * Object.values(urls).forEach(url => console.log(url));
    * ```
    */
   export async function GetVideoURLs(replays: Fightcade.Replay[]): Promise<Fightcade.VideoURLs>;
@@ -597,8 +516,9 @@ export namespace Fightcade {
    * Get Fightcade Game's Top Ranked Players
    *
    * @param gameid - Fightcade ROM Name
+   *
    * @example
-   * ```ts
+   * ```js
    * // Print the top 15 recent ranked UMK3 players and their ranks.
    * const gameid = 'umk3';
    * const rankings = await Fightcade.GetRankings(gameid);
@@ -613,81 +533,29 @@ export namespace Fightcade {
    * Get Fightcade Game's Top Ranked Players
    *
    * @param gameid - Fightcade ROM Name
-   * @param limit - `default: 15` Amount of Replays to request beginning from `0`
-   * @example
-   * ```ts
-   * // Print the top 30 recent ranked UMK3 players and their ranks.
-   * const gameid = 'umk3';
-   * const rankings = await Fightcade.GetRankings(gameid, 30);
-   * rankings.forEach(player => {
-   *  if (player.gameinfo && player.gameinfo[gameid].rank) {
-   *    console.log(`${Fightcade.Rank[player.gameinfo[gameid].rank]}: ${player.name}`);
-   * }});
-   * ```
-   */
-  export async function GetRankings(gameid: string, limit: number): Promise<Fightcade.Player[]>;
-  /**
-   * Get Fightcade Game's Top Ranked Players
+   * @param args.limit - `default: 15` Amount of Replays to request beginning from `offset`
+   * @param args.offset - `default: 0` Newest Replay number to request
+   * @param args.byElo - `default: true` Sort Players by Fightcade Elo
+   * @param args.recent - `default: true` Only Include Recent Players
    *
-   * @param gameid - Fightcade ROM Name
-   * @param limit - `default: 15` Amount of Replays to request beginning from `offset`
-   * @param offset - `default: 0` Newest Replay number to request
    * @example
-   * ```ts
-   * // Print the top 30 recent ranked UMK3 players and their ranks.
-   * const gameid = 'umk3';
-   * const rankings = await Fightcade.GetRankings(gameid, 30, 0);
-   * rankings.forEach(player => {
-   *  if (player.gameinfo && player.gameinfo[gameid].rank) {
-   *    console.log(`${Fightcade.Rank[player.gameinfo[gameid].rank]}: ${player.name}`);
-   * }});
-   * ```
-   */
-  export async function GetRankings(gameid: string, limit: number, offset: number): Promise<Fightcade.Player[]>;
-  /**
-   * Get Fightcade Game's Top Ranked Players
-   *
-   * @param gameid - Fightcade ROM Name
-   * @param limit - `default: 15` Amount of Replays to request beginning from `offset`
-   * @param offset - `default: 0` Newest Replay number to request
-   * @param byElo - `default: true` Sort Players by Fightcade Elo
-   * @example
-   * ```ts
-   * // Print the top 30 recent ranked UMK3 players and their ranks without ordering.
-   * const gameid = 'umk3';
-   * const rankings = await Fightcade.GetRankings(gameid, 30, 0, false);
-   * rankings.forEach(player => {
-   *  if (player.gameinfo && player.gameinfo[gameid].rank) {
-   *    console.log(`${Fightcade.Rank[player.gameinfo[gameid].rank]}: ${player.name}`);
-   * }});
-   * ```
-   */
-  export async function GetRankings(gameid: string, limit: number, offset: number, byElo: boolean): Promise<Fightcade.Player[]>;
-  /**
-   * Get Fightcade Game's Top Ranked Players
-   *
-   * @param gameid - Fightcade ROM Name
-   * @param limit - `default: 15` Amount of Replays to request beginning from `offset`
-   * @param offset - `default: 0` Newest Replay number to request
-   * @param byElo - `default: true` Sort Players by Fightcade Elo
-   * @param recent - `default: true` Only Include Recent Players
-   * @example
-   * ```ts
+   * ```js
    * // Print the top 30 ranked UMK3 players of all time and their ranks without ordering.
    * const gameid = 'umk3';
-   * const rankings = await Fightcade.GetRankings(gameid, 30, 0, false, false);
+   * const rankings = await Fightcade.GetRankings(gameid, {limit: 30, offset: 0, byElo: false, recent: false});
    * rankings.forEach(player => {
    *  if (player.gameinfo && player.gameinfo[gameid].rank) {
    *    console.log(`${Fightcade.Rank[player.gameinfo[gameid].rank]}: ${player.name}`);
    * }});
    * ```
    */
-  export async function GetRankings(gameid: string, limit: number, offset: number, byElo: boolean, recent: boolean): Promise<Fightcade.Player[]>;
-  export async function GetRankings(gameid: string, limit = 15, offset = 0, byElo = true, recent = true): Promise<Fightcade.Player[]> {
+  export async function GetRankings(gameid: string, args: {limit?: number, offset?: number, byElo?: boolean, recent?: boolean}): Promise<Fightcade.Player[]>;
+  export async function GetRankings(gameid: string, args = {}): Promise<Fightcade.Player[]> {
+    // limit = 15, offset = 0, byElo = true, recent = true
     const response = await fetch(URL.API, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({req: 'searchrankings', gameid, limit, offset, byElo, recent}),
+      body: JSON.stringify({req: 'searchrankings', gameid, ...args}),
     });
     return PlayerResultsResponseSchema.parse(await response.json()).results.results;
   }
@@ -696,11 +564,11 @@ export namespace Fightcade {
    * Get Fightcade Game Info
    *
    * @param gameid - Fightcade ROM Name
+   *
    * @example
-   * ```ts
-   * // Prints the publisher of the game.
-   * const gameid = 'umk3';
-   * const game = await Fightcade.GetGame(gameid);
+   * ```js
+   * // Prints the publisher of the game 'umk3'.
+   * const game = await Fightcade.GetGame('umk3');
    * console.log(game.publisher);
    * ```
    */
@@ -717,12 +585,13 @@ export namespace Fightcade {
    * Get Fightcade Game's Active Events
    *
    * @param gameid - Fightcade ROM Name
-   * @returns Empty if there are no active Events
+   *
+   * @returns Empty array if there are no active Events
+   *
    * @example
-   * ```ts
+   * ```js
    * // Print the 15 most recent active events for a game.
-   * const gameid = 'garou';
-   * const events = await Fightcade.GetEvents(gameid);
+   * const events = await Fightcade.GetEvents('garou');
    * events.forEach(event => console.log(event));
    * ```
    */
@@ -731,38 +600,25 @@ export namespace Fightcade {
    * Get Fightcade Game's Active Events
    *
    * @param gameid - Fightcade ROM Name
-   * @param limit - `default: 15` Amount of Replays to request beginning from `0`
-   * @returns Empty if there are no active Events
-   * @example
-   * ```ts
-   * // Print the 30 most recent active events for a game.
-   * const gameid = 'garou';
-   * const events = await Fightcade.GetEvents(gameid, 30);
-   * events.forEach(event => console.log(event));
-   * ```
-   */
-  export async function GetEvents(gameid: string, limit: number): Promise<Fightcade.Event[]>;
-  /**
-   * Get Fightcade Game's Active Events
+   * @param args.limit - `default: 15` Amount of Replays to request beginning from `offset`
+   * @param args.offset - `default: 0` Newest Replay number to request
    *
-   * @param gameid - Fightcade ROM Name
-   * @param limit - `default: 15` Amount of Replays to request beginning from `offset`
-   * @param offset - `default: 0` Newest Replay number to request
-   * @returns Empty if there are no active Events
+   * @returns Empty array if there are no active Events
+   *
    * @example
-   * ```ts
+   * ```js
    * // Print the 30 most recent active events for a game.
-   * const gameid = 'garou';
-   * const events = await Fightcade.GetEvents(gameid, 30, 0);
+   * const events = await Fightcade.GetEvents('garou', {limt: 30, offset: 0});
    * events.forEach(event => console.log(event));
    * ```
    */
-  export async function GetEvents(gameid: string, limit: number, offset: number): Promise<Fightcade.Event[]>;
-  export async function GetEvents(gameid: string, limit = 15, offset = 0): Promise<Fightcade.Event[]> {
+  export async function GetEvents(gameid: string, args: {limit?: number, offset?: number}): Promise<Fightcade.Event[]>;
+  export async function GetEvents(gameid: string, args = {}): Promise<Fightcade.Event[]> {
+    // limit = 15, offset = 0
     const response = await fetch(URL.API, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({req: 'searchevents', gameid, limit, offset}),
+      body: JSON.stringify({req: 'searchevents', gameid, ...args}),
     });
     return EventResultsResponseSchema.parse(await response.json()).results.results;
   }
