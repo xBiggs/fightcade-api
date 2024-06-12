@@ -201,7 +201,7 @@ export namespace Fightcade {
     available_for: z.number(),
     system: z.string(),
     ranked: z.boolean(),
-    training: z.boolean(),
+    training: z.boolean().optional(),
     genres: z.string().array(),
   });
 
