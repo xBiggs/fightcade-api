@@ -1,6 +1,6 @@
 {
   "name": "fightcade-api",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "An unofficial TypeScript wrapper for the Fightcade API.",
   "type": "module",
   "main": "./dist/fightcade-api.cjs",
