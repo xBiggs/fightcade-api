@@ -132,7 +132,7 @@ export namespace Fightcade {
     gameid: z.string(),
     num_matches: z.optional(z.number()),
     players: PlayerSchema.array(),
-    ranked: z.nullable(z.number()),
+    ranked: z.nullable(z.number().or(z.literal('cancelled'))),
     replay_file: z.optional(z.string()),
     realtime_views: z.optional(z.number()),
     saved_views: z.optional(z.number()),
@@ -149,7 +149,7 @@ export namespace Fightcade {
    * @param gameid - Fightcade ROM Name
    * @param num_matches - Replay Match Amount
    * @param players - Replay Player List
-   * @param ranked - Ranked Match?
+   * @param ranked - Ranked FT# Set or 'cancelled'
    * @param replay_file - Replay Filename
    * @param realtime_views - Total Amount of Live Spectators
    * @param saved_views - Amount of Replay Views
