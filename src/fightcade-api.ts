@@ -354,18 +354,19 @@ export namespace Fightcade {
    * @param args.offset - `default: 0` Newest Replay number to request
    * @param args.best - `default: false` Sort Replays by Fightcade Player Elo
    * @param args.since - `default: 0` Millisecond Epoch Timestamp Date
+   * @param args.ranked - `default: false` Request only Ranked Replays
    *
    * @example
    * ```js
-   * // Print the game channel names of the 5 best most recent replays since '2022-07-17T04:30:10.798Z'.
+   * // Print the game channel names of the 5 best most recent ranked replays since '2022-07-17T04:30:10.798Z'.
    * const date = new Date('2022-07-17T04:30:10.798Z');
-   * const replays = await Fightcade.GetReplays({limit: 5, best: true, since: date.getTime()});
+   * const replays = await Fightcade.GetReplays({limit: 5, best: true, since: date.getTime(), ranked: true});
    * replays.forEach(replay => console.log(replay.channelname));
    * ```
    */
-  export async function GetReplays(args: {gameid?: string, limit?: number, offset?: number, best?: boolean, since?: number}): Promise<Fightcade.Replay[]>;
+  export async function GetReplays(args: {gameid?: string, limit?: number, offset?: number, best?: boolean, since?: number, ranked?: boolean}): Promise<Fightcade.Replay[]>;
   export async function GetReplays(args = {}): Promise<Fightcade.Replay[]> {
-    // gameid = undefined, limit = 15, offset = 0, best = false, since = 0
+    // gameid = undefined, limit = 15, offset = 0, best = false, since = 0, boolean = false
     const response = await fetch(URL.API, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -395,18 +396,19 @@ export namespace Fightcade {
    * @param args.offset - `default: 0` Newest Replay number to request
    * @param args.best - `default: false` Sort Replays by Fightcade Player Elo
    * @param args.since - `default: 0` Millisecond Epoch Timestamp Date
+   * @param args.ranked - `default: false` Request only Ranked Replays
    *
    * @example
    * ```js
-   * // Print the game channel names of the 30 best most recent replays for the user 'biggs' since '2022-07-17T04:30:10.798Z'.
+   * // Print the game channel names of the 30 best most recent ranked replays for the user 'biggs' since '2022-07-17T04:30:10.798Z'.
    * const date = new Date('2022-07-17T04:30:10.798Z');
-   * const replays = await Fightcade.GetUserReplays('biggs', {limit: 30, best: true, since: date.getTime()});
+   * const replays = await Fightcade.GetUserReplays('biggs', {limit: 30, best: true, since: date.getTime(), ranked: true});
    * replays.forEach(replay => console.log(replay.channelname));
    * ```
    */
-  export async function GetUserReplays(username: string, args: {limit?: number, offset?: number, best?: boolean, since?: number}): Promise<Fightcade.Replay[]>;
+  export async function GetUserReplays(username: string, args: {limit?: number, offset?: number, best?: boolean, since?: number, ranked?: boolean}): Promise<Fightcade.Replay[]>;
   export async function GetUserReplays(username: string, args = {}): Promise<Fightcade.Replay[]> {
-    // limit = 15, offset = 0, best = false, since = 0
+    // limit = 15, offset = 0, best = false, since = 0, ranked = false
     const response = await fetch(URL.API, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},

@@ -86,7 +86,7 @@ try {
 
 ```ts
 async function GetReplays(): Promise<Fightcade.Replay[]>;
-async function GetReplays(args: {gameid?: string, limit?: number, offset?: number, best?: boolean, since?: number}): Promise<Fightcade.Replay[]>;
+async function GetReplays(args: {gameid?: string, limit?: number, offset?: number, best?: boolean, since?: number, ranked?: boolean}): Promise<Fightcade.Replay[]>;
 async function GetReplays(args = {}): Promise<Fightcade.Replay[]>;
 ```
 
@@ -106,7 +106,7 @@ try {
 
 ```ts
 async function GetUserReplays(username: string): Promise<Fightcade.Replay[]>;
-async function GetUserReplays(username: string, args: {limit?: number, offset?: number, best?: boolean, since?: number}): Promise<Fightcade.Replay[]>;
+async function GetUserReplays(username: string, args: {limit?: number, offset?: number, best?: boolean, since?: number, ranked: boolean}): Promise<Fightcade.Replay[]>;
 async function GetUserReplays(username: string, args = {}): Promise<Fightcade.Replay[]>;
 ```
 
