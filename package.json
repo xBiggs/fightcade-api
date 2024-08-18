@@ -34,12 +34,12 @@
     "bundle": "bun x tsup ./src/fightcade-api.ts --format cjs,esm --dts"
   },
   "devDependencies": {
-    "@types/node": "^20.11.24",
+    "@types/node": "^20.16.0",
     "bun-types": "latest",
     "tsup": "^8.2.4",
-    "typescript": "^5.3.3"
+    "typescript": "^5.5.4"
   },
   "dependencies": {
-    "zod": "^3.22.4"
+    "zod": "^3.23.8"
   }
 }
