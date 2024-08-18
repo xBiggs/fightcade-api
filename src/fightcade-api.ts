@@ -195,14 +195,14 @@ export namespace Fightcade {
     gameid: z.string(),
     romof: z.optional(z.string()),
     name: z.string(),
-    year: z.string(),
-    publisher: z.string(),
+    year: z.string().optional(),
+    publisher: z.string().optional(),
     emulator: z.string(),
     available_for: z.number(),
     system: z.string(),
     ranked: z.boolean(),
     training: z.boolean().optional(),
-    genres: z.string().array(),
+    genres: z.string().array().optional(),
   });
 
   /**
