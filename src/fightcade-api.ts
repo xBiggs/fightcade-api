@@ -586,22 +586,7 @@ export namespace Fightcade {
   /**
    * Get Fightcade Game's Active Events
    *
-   * @param gameid - Fightcade ROM Name
-   *
-   * @returns Empty array if there are no active Events
-   *
-   * @example
-   * ```js
-   * // Print the 15 most recent active events for a game.
-   * const events = await Fightcade.GetEvents('garou');
-   * events.forEach(event => console.log(event));
-   * ```
-   */
-  export async function GetEvents(gameid: string): Promise<Fightcade.Event[]>;
-  /**
-   * Get Fightcade Game's Active Events
-   *
-   * @param gameid - Fightcade ROM Name
+   * @param args.gameid - `deafult: undefined` Fightcade ROM Name. Get all Events if no `gameid` is supplied
    * @param args.limit - `default: 15` Amount of Replays to request beginning from `offset`
    * @param args.offset - `default: 0` Newest Replay number to request
    *
@@ -610,17 +595,16 @@ export namespace Fightcade {
    * @example
    * ```js
    * // Print the 30 most recent active events for a game.
-   * const events = await Fightcade.GetEvents('garou', {limt: 30, offset: 0});
+   * const events = await Fightcade.GetEvents({gameid: 'garou', limit: 30, offset: 0});
    * events.forEach(event => console.log(event));
    * ```
    */
-  export async function GetEvents(gameid: string, args: {limit?: number, offset?: number}): Promise<Fightcade.Event[]>;
-  export async function GetEvents(gameid: string, args = {}): Promise<Fightcade.Event[]> {
-    // limit = 15, offset = 0
+  export async function GetEvents(args: {gameid?: string, limit?: number, offset?: number} = {}): Promise<Fightcade.Event[]> {
+    // gameid = undefined, limit = 15, offset = 0
     const response = await fetch(URL.API, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({req: 'searchevents', gameid, ...args}),
+      body: JSON.stringify({req: 'searchevents', ...args}),
     });
     return EventResultsResponseSchema.parse(await response.json()).results.results;
   }

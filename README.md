@@ -186,17 +186,15 @@ try {
 ### GetEvents
 
 ```ts
-async function GetEvents(gameid: string): Promise<Fightcade.Event[]>;
-async function GetEvents(gameid: string, args: {limit?: number, offset?: number}): Promise<Fightcade.Event[]>;
-async function GetEvents(gameid: string, args = {}): Promise<Fightcade.Event[]>;
+async function GetEvents(args: {gameid?: string, limit?: number, offset?: number} = {}): Promise<Fightcade.Event[]>;
 ```
 
 ```js
 import { Fightcade } from 'fightcade-api';
 
 try {
-  // Print the 15 most recent active events for a game.
-  const events = await Fightcade.GetEvents('garou');
+  // Print the 15 most recent active events for all games.
+  const events = await Fightcade.GetEvents();
   events.forEach(event => console.log(event));
 } catch(e) {
   console.log(e);
