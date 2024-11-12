@@ -1,0 +1,5 @@
+{
+  "name": "@xbiggs/fightcade-api",
+  "version": "4.0.1",
+  "exports": "./src/fightcade-api.ts"
+}
